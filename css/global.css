@@ -3,6 +3,7 @@ header {
     justify-content: space-between;
     align-items: center;
     padding: 10px;
+    margin: 10px 15px 0 15px;
 }
 
 .search-bar {
@@ -21,7 +22,7 @@ header {
     padding: 10px;
     padding-right: 35px;
     border: 1px solid;
-    border-radius: 20px; /* Esquinas redondeadas */
+    border-radius: 20px;
     outline: none;
     font-size: 14px;
     width: 200px;
@@ -45,4 +46,19 @@ header {
     width: 16px;
     height: 16px;
     fill: #666;
+}
+
+.login-button {
+    padding: 12px 20px;
+    font-size: 16px;
+    background-color: #007BFF;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    margin-left: 10px;
+}
+
+.login-button:hover {
+    background-color: #0056b3;
 }
