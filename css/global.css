@@ -1,4 +1,48 @@
 header {
     display: flex;
     justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+}
+
+.search-bar {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.search-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.search-container input {
+    padding: 10px;
+    padding-right: 35px;
+    border: 1px solid;
+    border-radius: 20px; /* Esquinas redondeadas */
+    outline: none;
+    font-size: 14px;
+    width: 200px;
+    box-sizing: border-box;
+}
+
+.search-container button {
+    position: absolute;
+    right: 10px;
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    color: #666;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.search-container button svg {
+    width: 16px;
+    height: 16px;
+    fill: #666;
 }
