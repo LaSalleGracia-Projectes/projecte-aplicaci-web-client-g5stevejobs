@@ -1,9 +1,21 @@
+body {
+    margin: 0;
+    padding: 0;
+}
+
 header {
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 10px;
-    margin: 10px 15px 0 15px;
+    margin: 0;
+
+    background-image: url('../images/global/header.png');
+    background-size: contain;
+    background-position: center center;
+    background-repeat: repeat-x;
+
+    height: 70px;
 }
 
 .search-bar {
@@ -92,4 +104,16 @@ header {
 
 .login-button:hover {
     background-color: #0056b3;
+}
+
+@media screen and (max-width: 600px) {
+    header {
+        height: 150px;
+    }
+}
+
+@media screen and (max-width: 1024px) {
+    header {
+        height: 180px;
+    }
 }
