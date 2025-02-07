@@ -48,6 +48,37 @@ header {
     fill: #666;
 }
 
+.search-icon {
+    position: absolute;
+    right: 10px;
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.search-icon img {
+    width: 40px; /* Ajusta el tamaño si es necesario */
+    height: 40px;
+    transition: opacity 0.3s ease-in-out;
+}
+
+.search-icon .hover-icon {
+    position: absolute;
+    opacity: 0;
+}
+
+.search-icon:hover .static-icon {
+    opacity: 0;
+}
+
+.search-icon:hover .hover-icon {
+    opacity: 1;
+}
+
 .login-button {
     padding: 12px 20px;
     font-size: 16px;
