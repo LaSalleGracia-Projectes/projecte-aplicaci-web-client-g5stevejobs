@@ -1,0 +1,18 @@
+.download-container {
+    text-align: center;
+}
+
+.download-button {
+    padding: 24px 60px;
+    font-size: 48px;
+    background-color: #007BFF;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    margin-left: 10px;
+}
+
+.download-button:hover {
+    background-color: #0056b3;
+}
