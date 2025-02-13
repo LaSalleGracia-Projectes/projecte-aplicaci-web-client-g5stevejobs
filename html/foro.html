@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Foro</title>
+    <link rel="stylesheet" href="../css/reset.css">
+    <link rel="stylesheet" href="../css/global.css">
+    <link rel="stylesheet" href="../css/foro.css">
+</head>
+<body>
+    <header>
+        <img src="logo.png" alt="logoTheAbyss" />
+        <h3>Descarga</h3>
+        <h3>Foro</h3>
+        <h3>Blog</h3>
+        <h3>Soporte</h3>
+        <form class="search-bar">
+            <div class="search-container">
+                <input type="text" name="query" placeholder="Buscar perfil" />
+                <button type="submit" aria-label="Search" class="search-icon">
+                    <img src="../images/global/frame_0_delay-0.1s.gif" alt="Buscar" class="static-icon">
+                    <img src="../images/global/antorcha.gif" alt="Buscar" class="hover-icon">
+                </button>
+            </div>
+        </form>
+        <button class="login-button">Iniciar sesión</button>
+    </header>
+
+    <main>
+        <h1 class="forum-title">FORO</h1>
+        <p class="forum-description">text</p>
+        <table class="forum-table">
+            <thead>
+                <tr>
+                    <th>Tema</th>
+                    <th>Posted by</th>
+                    <th>Stats</th>
+                    <th>Posted</th>
+                    <th>Last post</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>
+                        <div class="topic">
+                            <div class="alert-icon">⚠️</div>
+                            <img src="image_placeholder.jpg" alt="Topic" class="topic-image">
+                            <div>
+                                <h3 class="topic-title">Title</h3>
+                                <button class="report-button">Report</button>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <p>Username</p>
+                        <p class="user-role">(if admin)</p>
+                    </td>
+                    <td>
+                        <p>Upvotes: 222</p>
+                        <p>Comments: 222</p>
+                    </td>
+                    <td>xx of December of 202X</td>
+                    <td>
+                        X time ago
+                        <span class="pinned-icon">📌</span>
+                    </td>
+                </tr>
+                <!-- Copiar y repetir la fila según sea necesario -->
+            </tbody>
+        </table>
+    </main>
+
+    <footer>
+        <p>footer text goes here</p>
+    </footer>
+</body>
+</html>
