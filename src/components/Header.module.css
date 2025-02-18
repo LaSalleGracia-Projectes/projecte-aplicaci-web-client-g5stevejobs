@@ -1,0 +1,103 @@
+/* Estilos del header */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    background-image: url('/images/global/header.png'); /* Ruta ajustada */
+    background-size: contain;
+    background-position: center center;
+    background-repeat: repeat-x;
+    height: 70px;
+}
+
+/* Estilos del nav, para los elementos en fila */
+.nav {
+    display: flex;
+    justify-content: space-evenly; /* Repartir los elementos uniformemente */
+    flex: 1; /* Hace que el nav ocupe el espacio restante */
+    align-items: center;
+}
+
+/* Estilos de los h3 dentro del nav */
+.nav h3 {
+    margin: 0; /* Elimina márgenes por defecto */
+    cursor: pointer;
+}
+
+/* Estilos de la barra de búsqueda */
+.searchBar {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+/* Estilos del contenedor de búsqueda */
+.searchContainer {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+/* Estilos del input de búsqueda */
+.searchInput {
+    padding: 10px;
+    padding-right: 35px;
+    border: 1px solid;
+    border-radius: 20px;
+    outline: none;
+    font-size: 14px;
+    width: 200px;
+    box-sizing: border-box;
+}
+
+/* Estilos del botón de búsqueda */
+.searchIcon {
+    position: absolute;
+    right: 10px;
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Estilos para las imágenes dentro del botón */
+.staticIcon,
+.hoverIcon {
+    width: 40px;
+    height: 40px;
+}
+
+/* Efectos para la imagen en hover */
+.hoverIcon {
+    position: absolute;
+    opacity: 0;
+}
+
+/* Cambiar la visibilidad de las imágenes al hacer hover */
+.searchIcon:hover .staticIcon {
+    opacity: 0;
+}
+
+.searchIcon:hover .hoverIcon {
+    opacity: 1;
+}
+
+/* Estilos del botón de inicio de sesión */
+.loginButton {
+    padding: 12px 20px;
+    font-size: 16px;
+    background-color: #007BFF;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    margin-left: 20px; /* Separación con la barra de búsqueda */
+}
+
+.loginButton:hover {
+    background-color: #0056b3;
+}
