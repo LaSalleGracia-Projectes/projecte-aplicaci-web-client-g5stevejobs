@@ -1,153 +1,151 @@
-'use client';
+"use client";
 
-import React from 'react';
+import React, { useState } from "react";
 
 const ForoPage = () => {
+  const [selectedTopic, setSelectedTopic] = useState("All");
   const pinnedTopics = [
     {
-      title: 'Title 1',
-      topic: 'Offtopic',
-      username: 'Username1',
+      title: "Pinned Topic 1",
+      topic: "Offtopic",
+      username: "Username1",
       upvotes: 222,
       comments: 222,
-      postedDate: 'xx of December of 202X',
-      lastPost: 'X time ago',
-      status: 'Active',
+      postedDate: "xx of December of 202X",
+      lastPost: "X time ago",
+      status: "Active",
     },
     {
-      title: 'Title 2',
-      topic: 'Bugs',
-      username: 'Username2',
+      title: "Pinned Topic 2",
+      topic: "Bugs",
+      username: "Username2",
       upvotes: 333,
       comments: 333,
-      postedDate: 'xx of January of 202X',
-      lastPost: 'Y time ago',
-      status: 'Inactive',
+      postedDate: "xx of January of 202X",
+      lastPost: "Y time ago",
+      status: "Inactive",
     },
   ];
 
   const otherTopics = [
     {
-      title: 'Title 3',
-      topic: 'Offtopic',
-      username: 'Username3',
+      title: "Other Topic 1",
+      topic: "Offtopic",
+      username: "Username3",
       upvotes: 111,
       comments: 111,
-      postedDate: 'xx of February of 202X',
-      lastPost: 'Z time ago',
-      status: 'Active',
+      postedDate: "xx of February of 202X",
+      lastPost: "Z time ago",
+      status: "Active",
     },
     {
-      title: 'Title 4',
-      topic: 'Bugs',
-      username: 'Username4',
+      title: "Other Topic 2",
+      topic: "Bugs",
+      username: "Username4",
       upvotes: 444,
       comments: 444,
-      postedDate: 'xx of March of 202X',
-      lastPost: 'W time ago',
-      status: 'Inactive',
+      postedDate: "xx of March of 202X",
+      lastPost: "W time ago",
+      status: "Inactive",
     },
   ];
 
+  const topics = ["All", "Offtopic", "Bugs", "Announcements", "Feedback"];
+
   return (
-    <div className="bg-gray-100 min-h-screen">
-      <main className="px-4 py-6">
-        <div className="text-center mb-6">
-          <h1 className="text-4xl font-bold text-gray-800 mb-2">FORO</h1>
-          <p className="text-base text-gray-600">text</p>
+    <div className="bg-gray-50 min-h-screen">
+      {/* Main Content */}
+      <main className="container mx-auto px-6 py-8">
+        {/* Search and Filters */}
+        <div className="flex flex-wrap justify-between items-center mb-6 gap-4">
+          <div className="relative flex items-center w-full md:w-1/3">
+            <input
+              type="text"
+              placeholder="Search topics..."
+              className="w-full px-4 py-2 border rounded-lg focus:ring focus:ring-blue-300 focus:outline-none"
+            />
+          </div>
+          <div className="relative">
+            <button
+              onClick={() => setSelectedTopic((prev) => (prev === "All" ? "" : "All"))}
+              className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:ring focus:ring-blue-300"
+            >
+              Filter Topics
+            </button>
+            <div className="absolute mt-2 w-40 bg-white rounded-lg shadow-lg overflow-hidden">
+              {topics.map((topic) => (
+                <div
+                  key={topic}
+                  onClick={() => setSelectedTopic(topic)}
+                  className={`px-4 py-2 text-gray-700 hover:bg-gray-100 cursor-pointer ${
+                    selectedTopic === topic ? "bg-blue-50 text-blue-600" : ""
+                  }`}
+                >
+                  {topic}
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
-        <div className="flex justify-between items-center mb-4">
-          <input
-            type="text"
-            placeholder="Search topics..."
-            className="px-4 py-2 border rounded w-1/3"
-          />
-          <button className="px-4 py-2 text-sm text-white bg-red-500 rounded hover:bg-red-600">
-            Report
-          </button>
-        </div>
-        <h2 className="text-2xl font-bold text-gray-800 mb-4">Fijados</h2>
-        <table className="w-full border-collapse mb-8">
-          <thead>
-            <tr>
-              <th className="px-4 py-2 text-left border-b bg-gray-200 text-gray-800">Tema</th>
-              <th className="px-4 py-2 text-left border-b bg-gray-200 text-gray-800">Temas</th>
-              <th className="px-4 py-2 text-left border-b bg-gray-200 text-gray-800">Posted by</th>
-              <th className="px-4 py-2 text-left border-b bg-gray-200 text-gray-800">Stats</th>
-              <th className="px-4 py-2 text-left border-b bg-gray-200 text-gray-800">Posted</th>
-              <th className="px-4 py-2 text-left border-b bg-gray-200 text-gray-800">Last post</th>
-              <th className="px-4 py-2 text-left border-b bg-gray-200 text-gray-800">Status</th>
-            </tr>
-          </thead>
-          <tbody>
+
+        {/* Pinned Topics */}
+        <section>
+          <h2 className="text-xl font-bold text-gray-800 mb-4">Pinned Topics</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {pinnedTopics.map((topic, index) => (
-              <tr key={index} className="border-b hover:bg-gray-50">
-                <td className="px-4 py-4">
-                  <h3 className="text-lg font-semibold text-gray-800 mb-1">{topic.title}</h3>
-                </td>
-                <td className="px-4 py-4">
-                  <p className="text-gray-700">{topic.topic}</p>
-                </td>
-                <td className="px-4 py-4">
-                  <p className="text-gray-700">{topic.username}</p>
-                  <p className="text-sm text-gray-500">(if admin)</p>
-                </td>
-                <td className="px-4 py-4">
-                  <p className="text-gray-700">Upvotes: {topic.upvotes}</p>
-                  <p className="text-gray-700">Comments: {topic.comments}</p>
-                </td>
-                <td className="px-4 py-4 text-gray-700">{topic.postedDate}</td>
-                <td className="px-4 py-4 text-gray-700">{topic.lastPost}</td>
-                <td className="px-4 py-4 text-gray-700">{topic.status}</td>
-              </tr>
+              <div
+                key={index}
+                className="p-6 bg-white rounded-lg shadow hover:shadow-lg transition-all"
+              >
+                <h3 className="text-lg font-semibold text-gray-800 mb-2">
+                  {topic.title}
+                </h3>
+                <p className="text-gray-500 text-sm">Posted by {topic.username}</p>
+                <div className="mt-4 flex justify-between items-center text-sm text-gray-600">
+                  <span>Upvotes: {topic.upvotes}</span>
+                  <span>Comments: {topic.comments}</span>
+                  <span>{topic.status}</span>
+                </div>
+              </div>
             ))}
-          </tbody>
-        </table>
-        <h2 className="text-2xl font-bold text-gray-800 mb-4">Otros Foros</h2>
-        <table className="w-full border-collapse">
-          <thead>
-            <tr>
-              <th className="px-4 py-2 text-left border-b bg-gray-200 text-gray-800">Tema</th>
-              <th className="px-4 py-2 text-left border-b bg-gray-200 text-gray-800">Temas</th>
-              <th className="px-4 py-2 text-left border-b bg-gray-200 text-gray-800">Posted by</th>
-              <th className="px-4 py-2 text-left border-b bg-gray-200 text-gray-800">Stats</th>
-              <th className="px-4 py-2 text-left border-b bg-gray-200 text-gray-800">Posted</th>
-              <th className="px-4 py-2 text-left border-b bg-gray-200 text-gray-800">Last post</th>
-              <th className="px-4 py-2 text-left border-b bg-gray-200 text-gray-800">Status</th>
-            </tr>
-          </thead>
-          <tbody>
-            {otherTopics.map((topic, index) => (
-              <tr key={index} className="border-b hover:bg-gray-50">
-                <td className="px-4 py-4">
-                  <h3 className="text-lg font-semibold text-gray-800 mb-1">{topic.title}</h3>
-                </td>
-                <td className="px-4 py-4">
-                  <p className="text-gray-700">{topic.topic}</p>
-                </td>
-                <td className="px-4 py-4">
-                  <p className="text-gray-700">{topic.username}</p>
-                  <p className="text-sm text-gray-500">(if admin)</p>
-                </td>
-                <td className="px-4 py-4">
-                  <p className="text-gray-700">Upvotes: {topic.upvotes}</p>
-                  <p className="text-gray-700">Comments: {topic.comments}</p>
-                </td>
-                <td className="px-4 py-4 text-gray-700">{topic.postedDate}</td>
-                <td className="px-4 py-4 text-gray-700">{topic.lastPost}</td>
-                <td className="px-4 py-4 text-gray-700">{topic.status}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-        <div className="flex justify-center mt-4">
-          <button className="px-4 py-2 text-sm text-white bg-blue-500 rounded hover:bg-blue-600">
+          </div>
+        </section>
+
+        {/* Other Topics */}
+        <section className="mt-8">
+          <h2 className="text-xl font-bold text-gray-800 mb-4">Other Topics</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {otherTopics
+              .filter((topic) => selectedTopic === "All" || topic.topic === selectedTopic)
+              .map((topic, index) => (
+                <div
+                  key={index}
+                  className="p-6 bg-white rounded-lg shadow hover:shadow-lg transition-all"
+                >
+                  <h3 className="text-lg font-semibold text-gray-800 mb-2">
+                    {topic.title}
+                  </h3>
+                  <p className="text-gray-500 text-sm">Posted by {topic.username}</p>
+                  <div className="mt-4 flex justify-between items-center text-sm text-gray-600">
+                    <span>Upvotes: {topic.upvotes}</span>
+                    <span>Comments: {topic.comments}</span>
+                    <span>{topic.status}</span>
+                  </div>
+                </div>
+              ))}
+          </div>
+        </section>
+
+        <div className="flex justify-center mt-8">
+          <button className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
             Load More
           </button>
         </div>
       </main>
-      <footer className="py-4 text-sm text-center text-white bg-gray-800">
-        footer text goes here
+
+      {/* Footer */}
+      <footer className="py-4 text-sm text-center text-gray-600 bg-gray-100">
+        &copy; 2025 Foro+. All rights reserved.
       </footer>
     </div>
   );
