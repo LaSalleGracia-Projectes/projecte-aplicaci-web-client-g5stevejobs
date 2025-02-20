@@ -8,6 +8,11 @@ const ForoPage = () => {
       <main className="px-4 py-6 text-center">
         <h1 className="text-4xl font-bold text-gray-800 mb-2">FORO</h1>
         <p className="text-base text-gray-600 mb-6">text</p>
+        <div className="flex justify-end mb-4">
+          <button className="px-4 py-2 text-sm text-white bg-red-500 rounded hover:bg-red-600">
+            Report
+          </button>
+        </div>
         <table className="w-full border-collapse">
           <thead>
             <tr>
@@ -43,9 +48,6 @@ const ForoPage = () => {
                       <h3 className="text-lg font-semibold text-gray-800 mb-1">
                         Title
                       </h3>
-                      <button className="px-2 py-1 text-sm text-white bg-red-500 rounded hover:bg-red-600">
-                        Report
-                      </button>
                     </div>
                   </div>
                 </td>
