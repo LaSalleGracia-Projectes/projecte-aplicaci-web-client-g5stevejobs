@@ -11,8 +11,8 @@ module.exports = withMT ({
   theme: {
     extend: {
       colors: {
-        background: "var(--background)",
-        foreground: "var(--foreground)",
+        'dark-gray': '#2d2d2d',
+        'light-gray': '#3d3d3d',
       },
     },
   },

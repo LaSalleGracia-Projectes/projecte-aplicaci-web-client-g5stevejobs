@@ -11,27 +11,27 @@ const BlogPage = () => {
   ];
 
   return (
-    <div className="bg-gray-100 min-h-screen">
+    <div className="bg-gray-900 min-h-screen text-white">
       <main className="px-4 py-6 text-center">
-        <h1 className="text-4xl font-bold text-gray-800 mb-6">BLOG</h1>
+        <h1 className="text-4xl font-bold text-gray-100 mb-6">BLOG</h1>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {blogs.map((blog) => (
             <Link key={blog.id} href={`/blog/${blog.slug}`}>
-              <article className="bg-white shadow-md rounded-lg overflow-hidden cursor-pointer hover:shadow-lg">
-                <div className="h-48 bg-gray-300"></div>
+              <article className="bg-gray-800 shadow-md rounded-lg overflow-hidden cursor-pointer hover:shadow-lg transition-shadow">
+                <div className="h-48 bg-gray-700"></div>
                 <div className="p-4 text-left">
-                  <h2 className="text-xl font-semibold text-gray-800 mb-2">
+                  <h2 className="text-xl font-semibold text-gray-100 mb-2">
                     {blog.title}
                   </h2>
-                  <p className="text-sm text-gray-500 mb-2">{blog.date}</p>
-                  <p className="text-base text-gray-700">{blog.preview}</p>
+                  <p className="text-sm text-gray-400 mb-2">{blog.date}</p>
+                  <p className="text-base text-gray-300">{blog.preview}</p>
                 </div>
               </article>
             </Link>
           ))}
         </div>
       </main>
-      <footer className="py-4 text-sm text-center text-white bg-gray-800">
+      <footer className="py-4 text-sm text-center bg-gray-800">
         footer text goes here
       </footer>
     </div>

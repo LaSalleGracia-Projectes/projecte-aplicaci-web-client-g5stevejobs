@@ -226,7 +226,7 @@ const ForoPage = () => {
   );
 
   return (
-    <div className="bg-gray-50 min-h-screen">
+    <div className="bg-dark-gray min-h-screen text-white">
       {/* Main Content */}
       <main className="container mx-auto px-6 py-8">
         {/* Search and Filters */}
@@ -264,14 +264,14 @@ const ForoPage = () => {
         {/* Pinned Topics */}
         {currentPage === 1 && (
           <section>
-            <h2 className="text-xl font-bold text-gray-800 mb-4">Pinned Topics</h2>
+            <h2 className="text-xl font-bold mb-4">Pinned Topics</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {pinnedTopics.map((topic, index) => (
                 <div
                   key={index}
-                  className="p-6 bg-white rounded-lg shadow hover:shadow-lg transition-all"
+                  className="p-6 bg-light-gray rounded-lg shadow hover:shadow-lg transition-all"
                 >
-                  <h3 className="text-lg font-semibold text-gray-800 mb-2">
+                  <h3 className="text-lg font-semibold mb-2">
                     {topic.title}
                   </h3>
                   <p className="text-gray-500 text-sm">Posted by {topic.username}</p>
@@ -292,14 +292,14 @@ const ForoPage = () => {
 
         {/* Other Topics */}
         <section className="mt-8">
-          <h2 className="text-xl font-bold text-gray-800 mb-4">Other Topics</h2>
+          <h2 className="text-xl font-bold mb-4">Other Topics</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {displayedTopics.map((topic, index) => (
               <div
                 key={index}
-                className="p-6 bg-white rounded-lg shadow hover:shadow-lg transition-all"
+                className="p-6 bg-light-gray rounded-lg shadow hover:shadow-lg transition-all"
               >
-                <h3 className="text-lg font-semibold text-gray-800 mb-2">
+                <h3 className="text-lg font-semibold mb-2">
                   {topic.title}
                 </h3>
                 <p className="text-gray-500 text-sm">Posted by {topic.username}</p>
@@ -336,7 +336,7 @@ const ForoPage = () => {
       </main>
 
       {/* Footer */}
-      <footer className="py-4 text-sm text-center text-gray-600 bg-gray-100">
+      <footer className="py-4 text-sm text-center bg-gray-800">
         &copy; 2025 Foro+. All rights reserved.
       </footer>
     </div>
