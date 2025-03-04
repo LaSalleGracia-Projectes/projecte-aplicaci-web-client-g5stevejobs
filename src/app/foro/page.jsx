@@ -1,12 +1,13 @@
 "use client";
 
 import React, { useState } from "react";
+import { useRouter } from "next/navigation";
 
 const ForoPage = () => {
   const [selectedTopic, setSelectedTopic] = useState("All");
   const [currentPage, setCurrentPage] = useState(1);
   const topicsPerPage = 10;
-
+  const router = useRouter();
   const pinnedTopics = [
     {
       title: "Pinned Topic 1",
@@ -226,10 +227,8 @@ const ForoPage = () => {
   );
 
   return (
-    <div className="bg-dark-gray min-h-screen text-white">
-      {/* Main Content */}
+    <div className="bg-gray-900 min-h-screen text-white">
       <main className="container mx-auto px-6 py-8">
-        {/* Search and Filters */}
         <div className="flex flex-wrap justify-between items-center mb-6 gap-4">
           <div className="relative flex items-center w-full md:w-1/3">
             <input
@@ -240,7 +239,6 @@ const ForoPage = () => {
           </div>
           <div className="relative">
             <button
-              onClick={() => setSelectedTopic((prev) => (prev === "All" ? "" : "All"))}
               className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:ring focus:ring-blue-300"
             >
               Filter Topics
@@ -261,7 +259,6 @@ const ForoPage = () => {
           </div>
         </div>
 
-        {/* Pinned Topics */}
         {currentPage === 1 && (
           <section>
             <h2 className="text-xl font-bold mb-4">Pinned Topics</h2>
@@ -269,7 +266,8 @@ const ForoPage = () => {
               {pinnedTopics.map((topic, index) => (
                 <div
                   key={index}
-                  className="p-6 bg-light-gray rounded-lg shadow hover:shadow-lg transition-all"
+                  onClick={() => router.push(`/foro/${topic.title.toLowerCase().replace(/\s+/g, '-')}`)}
+                  className="p-6 bg-gray-800 rounded-lg shadow hover:shadow-lg transition-all cursor-pointer"
                 >
                   <h3 className="text-lg font-semibold mb-2">
                     {topic.title}
@@ -290,14 +288,14 @@ const ForoPage = () => {
           </section>
         )}
 
-        {/* Other Topics */}
         <section className="mt-8">
           <h2 className="text-xl font-bold mb-4">Other Topics</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {displayedTopics.map((topic, index) => (
               <div
                 key={index}
-                className="p-6 bg-light-gray rounded-lg shadow hover:shadow-lg transition-all"
+                onClick={() => router.push(`/foro/${topic.title.toLowerCase().replace(/\s+/g, '-')}`)}
+                className="p-6 bg-gray-800 rounded-lg shadow hover:shadow-lg transition-all cursor-pointer"
               >
                 <h3 className="text-lg font-semibold mb-2">
                   {topic.title}
@@ -317,7 +315,6 @@ const ForoPage = () => {
           </div>
         </section>
 
-        {/* Pagination */}
         <div className="flex justify-center mt-8">
           {Array.from({ length: totalPages }, (_, index) => (
             <button
@@ -334,8 +331,6 @@ const ForoPage = () => {
           ))}
         </div>
       </main>
-
-      {/* Footer */}
       <footer className="py-4 text-sm text-center bg-gray-800">
         &copy; 2025 Foro+. All rights reserved.
       </footer>

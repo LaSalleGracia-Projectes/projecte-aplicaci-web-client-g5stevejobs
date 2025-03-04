@@ -1,42 +1,76 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
+import { useParams } from 'next/navigation';
 
-const ForumDetailPage = ({ params }) => {
-  const { slug } = params;
+const ForumDiscussionPage = () => {
+  const { slug } = useParams();
 
-  const [forumData, setForumData] = useState(null);
+  const [comments, setComments] = useState([
+    {
+      author: "User1",
+      content: "This is the first comment on this topic!",
+      postedAt: "2 hours ago",
+    },
+    {
+      author: "User2",
+      content: "I agree with the points mentioned above.",
+      postedAt: "1 hour ago",
+    },
+  ]);
 
-  const forums = {
-    offtopic: {
-      title: "Offtopic Discussions",
-      description: "A place to talk about anything and everything.",
-      topics: [
-        { title: "Random thoughts", comments: 12, upvotes: 40 },
-        { title: "Movies to watch", comments: 20, upvotes: 55 },
-      ],
+  const [newComment, setNewComment] = useState("");
+
+  const forumTopics = {
+    "pinned-topic-1": {
+      title: "Pinned Topic 1",
+      description: "Discussion about Pinned Topic 1.",
+      author: "Username1",
+      postedDate: "xx of December of 202X",
+      upvotes: 222,
+      commentsCount: comments.length,
+      pinnedTopics: [],
+      otherTopics: [],
     },
-    bugs: {
-      title: "Bug Reports",
-      description: "Report and discuss bugs in our platform.",
-      topics: [
-        { title: "Login issue", comments: 8, upvotes: 30 },
-        { title: "UI glitches", comments: 15, upvotes: 50 },
-      ],
+    "pinned-topic-2": {
+      title: "Pinned Topic 2",
+      description: "Discussion about Pinned Topic 2.",
+      author: "Username2",
+      postedDate: "xx of January of 202X",
+      upvotes: 333,
+      commentsCount: comments.length,
+      pinnedTopics: [],
+      otherTopics: [],
     },
-    announcements: {
-      title: "Announcements",
-      description: "Stay updated with our latest news and updates.",
-      topics: [
-        { title: "New Features", comments: 25, upvotes: 100 },
-        { title: "Upcoming Events", comments: 10, upvotes: 60 },
-      ],
+    "other-topic-1": {
+      title: "Other Topic 1",
+      description: "Discussion about Other Topic 1.",
+      author: "Username3",
+      postedDate: "xx of February of 202X",
+      upvotes: 111,
+      commentsCount: comments.length,
+      pinnedTopics: [],
+      otherTopics: [],
     },
+    // Add other topics similarly...
   };
 
-  useEffect(() => {
-    setForumData(forums[slug] || null);
-  }, [slug]);
+  const forumData = forumTopics[slug] || null;
+
+  const handleCommentSubmit = (e) => {
+    e.preventDefault();
+    if (newComment.trim()) {
+      setComments([
+        ...comments,
+        {
+          author: "CurrentUser",
+          content: newComment,
+          postedAt: "Just now",
+        },
+      ]);
+      setNewComment("");
+    }
+  };
 
   if (!forumData) {
     return (
@@ -47,31 +81,77 @@ const ForumDetailPage = ({ params }) => {
   }
 
   return (
-    <div className="bg-gray-50 min-h-screen">
+    <div className="bg-gray-900 min-h-screen text-white">
       <main className="container mx-auto px-6 py-8">
-        <h1 className="text-3xl font-bold text-gray-800 mb-4">{forumData.title}</h1>
-        <p className="text-gray-600 mb-6">{forumData.description}</p>
+        {/* Forum Header */}
+        <header className="mb-6">
+          <h1 className="text-3xl font-bold text-gray-100 mb-2">
+            {forumData.title}
+          </h1>
+          <p className="text-gray-400 mb-4">{forumData.description}</p>
+          <div className="text-sm text-gray-500 flex gap-4">
+            <span>Posted by: {forumData.author}</span>
+            <span>On: {forumData.postedDate}</span>
+            <span>Upvotes: {forumData.upvotes}</span>
+            <span>Comments: {forumData.commentsCount}</span>
+          </div>
+        </header>
 
-        <section>
-          <h2 className="text-xl font-semibold text-gray-800 mb-4">Topics</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {forumData.topics.map((topic, index) => (
+        {/* Comments Section */}
+        <section className="mb-8">
+          <h2 className="text-xl font-semibold text-gray-100 mb-4">
+            Comments
+          </h2>
+          <div className="space-y-4">
+            {comments.map((comment, index) => (
               <div
                 key={index}
-                className="p-6 bg-white rounded-lg shadow hover:shadow-lg transition-all"
+                className="p-4 bg-gray-800 rounded-lg shadow hover:shadow-md transition-all"
               >
-                <h3 className="text-lg font-semibold text-gray-800 mb-2">{topic.title}</h3>
-                <div className="flex justify-between items-center text-sm text-gray-600">
-                  <span>Comments: {topic.comments}</span>
-                  <span>Upvotes: {topic.upvotes}</span>
+                <p className="text-sm text-gray-100">{comment.content}</p>
+                <div className="text-xs text-gray-400 mt-2 flex justify-between">
+                  <span>By: {comment.author}</span>
+                  <span>{comment.postedAt}</span>
                 </div>
               </div>
             ))}
           </div>
         </section>
+
+        {/* Add Comment Section */}
+        <section>
+          <h2 className="text-xl font-semibold text-gray-100 mb-4">
+            Add a Comment
+          </h2>
+          <form onSubmit={handleCommentSubmit} className="flex flex-col gap-4">
+            <textarea
+              value={newComment}
+              onChange={(e) => setNewComment(e.target.value)}
+              placeholder="Write your comment here..."
+              className="w-full p-4 border border-gray-600 rounded-lg bg-gray-700 text-gray-100 focus:ring focus:ring-blue-300 focus:outline-none"
+              rows="4"
+            />
+            <button
+              type="submit"
+              className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:ring focus:ring-blue-300"
+            >
+              Post Comment
+            </button>
+          </form>
+        </section>
+
+        {/* Back Button */}
+        <div className="mt-8">
+          <button
+            onClick={() => window.history.back()}
+            className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300"
+          >
+            Back to Forums
+          </button>
+        </div>
       </main>
     </div>
   );
 };
 
-export default ForumDetailPage;
+export default ForumDiscussionPage;
