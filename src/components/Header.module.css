@@ -3,12 +3,16 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 10px;
-    background-image: url('/images/global/header.png'); /* Ruta ajustada */
-    background-size: contain;
-    background-position: center center;
-    background-repeat: repeat-x;
+    padding: 10px 20px;
+    background-color: #1a1a1a; /* Fondo gris oscuro */
     height: 70px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Contenedor del logo */
+.logoContainer {
+    display: flex;
+    align-items: center;
 }
 
 /* Estilos del nav, para los elementos en fila */
@@ -20,9 +24,37 @@
 }
 
 /* Estilos de los h3 dentro del nav */
-.nav h3 {
-    margin: 0; /* Elimina márgenes por defecto */
+.navItem {
+    margin: 0 15px; /* Espaciado entre los elementos del nav */
     cursor: pointer;
+    color: #ffffff; /* Color del texto */
+    font-size: 18px;
+    position: relative;
+    transition: color 0.3s;
+}
+
+.navItem:hover {
+    color: #007BFF; /* Color del texto al hacer hover */
+}
+
+.navItem::after {
+    content: '';
+    display: block;
+    width: 0;
+    height: 2px;
+    background: #007BFF;
+    transition: width 0.3s;
+    position: absolute;
+    bottom: -5px;
+    left: 0;
+}
+
+.navItem:hover::after {
+    width: 100%;
+}
+
+.active::after {
+    width: 100%;
 }
 
 /* Estilos de la barra de búsqueda */
@@ -43,12 +75,14 @@
 .searchInput {
     padding: 10px;
     padding-right: 35px;
-    border: 1px solid;
+    border: 1px solid #444;
     border-radius: 20px;
     outline: none;
     font-size: 14px;
     width: 200px;
     box-sizing: border-box;
+    background-color: #2e2e2e; /* Fondo gris más claro */
+    color: #ffffff; /* Color del texto */
 }
 
 /* Estilos del botón de búsqueda */

@@ -2,22 +2,28 @@
 
 import React from 'react';
 import Image from 'next/image';
+import { usePathname } from 'next/navigation';
 import styles from './Header.module.css'; // Módulo CSS para estilos
 
 const Header = () => {
+  const currentPath = usePathname();
+
   return (
     <header className={styles.header}>
-      <Image
-        src="/images/global/Background.png"
-        alt="logoTheAbyss"
-        width={150}
-        height={50}
-      />
+      <div className={styles.logoContainer}>
+        <Image
+          src="/images/placeholder.png" // Placeholder para el logo
+          alt="logoTheAbyss"
+          width={150}
+          height={50}
+        />
+      </div>
       <nav className={styles.nav}>
-        <h3>Descarga</h3>
-        <h3>Foro</h3>
-        <h3>Blog</h3>
-        <h3>Soporte</h3>
+        <h3 className={`${styles.navItem} ${currentPath === '/descarga' ? styles.active : ''}`}>Descarga</h3>
+        <h3 className={`${styles.navItem} ${currentPath === '/about' ? styles.active : ''}`}>About Us</h3>
+        <h3 className={`${styles.navItem} ${currentPath === '/blog' ? styles.active : ''}`}>Blog</h3>
+        <h3 className={`${styles.navItem} ${currentPath === '/foro' ? styles.active : ''}`}>Foro</h3>
+        <h3 className={`${styles.navItem} ${currentPath === '/soporte' ? styles.active : ''}`}>Soporte</h3>
       </nav>
       <form className={styles.searchBar}>
         <div className={styles.searchContainer}>
