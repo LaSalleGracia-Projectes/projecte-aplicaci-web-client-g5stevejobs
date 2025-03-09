@@ -3,7 +3,7 @@ import Link from "next/link";
 
 const SignUp = () => {
     return (
-        <div className="flex items-center justify-center min-h-screen bg-gray-900">
+        <div className="flex items-center justify-center min-h-screen bg-gray-850">
             <div className="bg-gray-800 p-8 rounded shadow-lg w-full max-w-md">
                 <h1 className="text-2xl font-bold mb-4 text-center text-gray-100">Regístrate</h1>
                 <p className="text-center mb-4 text-gray-300">

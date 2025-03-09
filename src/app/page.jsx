@@ -4,7 +4,7 @@ import Image from "next/image"; // Importa el componente Image de Next.js
 
 export default function Home() {
   return (
-    <main className="bg-gray-900 min-h-screen text-white flex flex-col items-center justify-center space-y-12">
+    <main className="bg-gray-850 min-h-screen text-white flex flex-col items-center justify-center space-y-12">
       {/* Título principal */}
       <h1 className="text-6xl font-bold text-center">The Abyss</h1>
       

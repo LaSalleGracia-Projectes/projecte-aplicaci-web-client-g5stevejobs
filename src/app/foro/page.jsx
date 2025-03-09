@@ -227,7 +227,7 @@ const ForoPage = () => {
   );
 
   return (
-    <div className="bg-gray-900 min-h-screen text-white">
+    <div className="bg-gray-850 min-h-screen text-white">
       <main className="container mx-auto px-6 py-8">
         <div className="flex flex-wrap justify-between items-center mb-6 gap-4">
           <div className="relative flex items-center w-full md:w-1/3">
@@ -331,9 +331,6 @@ const ForoPage = () => {
           ))}
         </div>
       </main>
-      <footer className="py-4 text-sm text-center bg-gray-800">
-        &copy; 2025 Foro+. All rights reserved.
-      </footer>
     </div>
   );
 };

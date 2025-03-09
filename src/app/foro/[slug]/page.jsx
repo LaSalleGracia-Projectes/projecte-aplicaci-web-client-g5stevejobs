@@ -81,7 +81,7 @@ const ForumDiscussionPage = () => {
   }
 
   return (
-    <div className="bg-gray-900 min-h-screen text-white">
+    <div className="bg-gray-850 min-h-screen text-white">
       <main className="container mx-auto px-6 py-8">
         {/* Forum Header */}
         <header className="mb-6">

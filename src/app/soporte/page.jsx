@@ -4,7 +4,7 @@ import React from 'react';
 
 const SoportePage = () => {
   return (
-    <div className="bg-gray-900 min-h-screen text-white">
+    <div className="bg-gray-850 min-h-screen text-white">
       <main className="px-4 py-6">
         {/* FAQ Section */}
         <section className="bg-gray-800 p-6 rounded-lg shadow-md mb-8">
@@ -82,9 +82,6 @@ const SoportePage = () => {
           </div>
         </section>
       </main>
-      <footer className="py-4 bg-gray-800 text-center text-sm text-gray-400">
-        footer text goes here
-      </footer>
     </div>
   );
 };

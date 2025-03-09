@@ -11,7 +11,7 @@ const BlogPage = () => {
   ];
 
   return (
-    <div className="bg-gray-900 min-h-screen text-white">
+    <div className="bg-gray-850 min-h-screen text-white">
       <main className="px-4 py-6 text-center">
         <h1 className="text-4xl font-bold text-gray-100 mb-6">BLOG</h1>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -31,9 +31,6 @@ const BlogPage = () => {
           ))}
         </div>
       </main>
-      <footer className="py-4 text-sm text-center bg-gray-800">
-        footer text goes here
-      </footer>
     </div>
   );
 };

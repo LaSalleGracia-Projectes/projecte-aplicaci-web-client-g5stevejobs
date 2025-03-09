@@ -11,8 +11,7 @@ module.exports = withMT ({
   theme: {
     extend: {
       colors: {
-        'dark-gray': '#2d2d2d',
-        'light-gray': '#3d3d3d',
+        'gray-850': '#2e2e2e', // Define el color gris intermedio
       },
     },
   },
