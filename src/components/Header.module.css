@@ -3,10 +3,13 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 10px 20px;
+    padding: 20px 40px;
     background-color: #1a1a1a; /* Fondo gris oscuro */
-    height: 70px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    height: 100px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
 }
 
 /* Contenedor del logo */
@@ -25,10 +28,10 @@
 
 /* Estilos de los h3 dentro del nav */
 .navItem {
-    margin: 0 15px; /* Espaciado entre los elementos del nav */
+    margin: 0 20px; /* Espaciado entre los elementos del nav */
     cursor: pointer;
     color: #ffffff; /* Color del texto */
-    font-size: 18px;
+    font-size: 20px;
     position: relative;
     transition: color 0.3s;
 }
@@ -41,7 +44,7 @@
     content: '';
     display: block;
     width: 0;
-    height: 2px;
+    height: 3px;
     background: #007BFF;
     transition: width 0.3s;
     position: absolute;
@@ -73,13 +76,13 @@
 
 /* Estilos del input de búsqueda */
 .searchInput {
-    padding: 10px;
-    padding-right: 35px;
+    padding: 12px;
+    padding-right: 45px;
     border: 1px solid #444;
-    border-radius: 20px;
+    border-radius: 25px;
     outline: none;
-    font-size: 14px;
-    width: 200px;
+    font-size: 16px;
+    width: 250px;
     box-sizing: border-box;
     background-color: #2e2e2e; /* Fondo gris más claro */
     color: #ffffff; /* Color del texto */
@@ -122,12 +125,12 @@
 
 /* Estilos del botón de inicio de sesión */
 .loginButton {
-    padding: 12px 20px;
-    font-size: 16px;
+    padding: 14px 24px;
+    font-size: 18px;
     background-color: #007BFF;
     color: white;
     border: none;
-    border-radius: 8px;
+    border-radius: 10px;
     cursor: pointer;
     margin-left: 20px; /* Separación con la barra de búsqueda */
 }

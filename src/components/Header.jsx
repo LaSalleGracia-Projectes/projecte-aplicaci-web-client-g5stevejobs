@@ -2,6 +2,7 @@
 
 import React from 'react';
 import Image from 'next/image';
+import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import styles from './Header.module.css'; // Módulo CSS para estilos
 
@@ -14,16 +15,26 @@ const Header = () => {
         <Image
           src="/images/placeholder.png" // Placeholder para el logo
           alt="logoTheAbyss"
-          width={150}
-          height={50}
+          width={200}
+          height={70}
         />
       </div>
       <nav className={styles.nav}>
-        <h3 className={`${styles.navItem} ${currentPath === '/descarga' ? styles.active : ''}`}>Descarga</h3>
-        <h3 className={`${styles.navItem} ${currentPath === '/about' ? styles.active : ''}`}>About Us</h3>
-        <h3 className={`${styles.navItem} ${currentPath === '/blog' ? styles.active : ''}`}>Blog</h3>
-        <h3 className={`${styles.navItem} ${currentPath === '/foro' ? styles.active : ''}`}>Foro</h3>
-        <h3 className={`${styles.navItem} ${currentPath === '/soporte' ? styles.active : ''}`}>Soporte</h3>
+        <Link href="/">
+          <h3 className={`${styles.navItem} ${currentPath === '/' ? styles.active : ''}`}>Descarga</h3>
+        </Link>
+        <Link href="/about">
+          <h3 className={`${styles.navItem} ${currentPath === '/about' ? styles.active : ''}`}>About Us</h3>
+        </Link>
+        <Link href="/blog">
+          <h3 className={`${styles.navItem} ${currentPath === '/blog' ? styles.active : ''}`}>Blog</h3>
+        </Link>
+        <Link href="/foro">
+          <h3 className={`${styles.navItem} ${currentPath === '/foro' ? styles.active : ''}`}>Foro</h3>
+        </Link>
+        <Link href="/soporte">
+          <h3 className={`${styles.navItem} ${currentPath === '/soporte' ? styles.active : ''}`}>Soporte</h3>
+        </Link>
       </nav>
       <form className={styles.searchBar}>
         <div className={styles.searchContainer}>
@@ -51,7 +62,9 @@ const Header = () => {
           </button>
         </div>
       </form>
-      <button className={styles.loginButton}>Iniciar sesión</button>
+      <Link href="/login">
+        <button className={styles.loginButton}>Iniciar sesión</button>
+      </Link>
     </header>
   );
 };
