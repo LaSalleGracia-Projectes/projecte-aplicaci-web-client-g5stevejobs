@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 const ForoPage = () => {
   const [selectedTopic, setSelectedTopic] = useState("All");
   const [currentPage, setCurrentPage] = useState(1);
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
   const topicsPerPage = 10;
   const router = useRouter();
   const pinnedTopics = [
@@ -239,23 +240,29 @@ const ForoPage = () => {
           </div>
           <div className="relative">
             <button
+              onClick={() => setIsFilterOpen(!isFilterOpen)}
               className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:ring focus:ring-blue-300"
             >
               Filter Topics
             </button>
-            <div className="absolute mt-2 w-40 bg-white rounded-lg shadow-lg overflow-hidden">
-              {topics.map((topic) => (
-                <div
-                  key={topic}
-                  onClick={() => setSelectedTopic(topic)}
-                  className={`px-4 py-2 text-gray-700 hover:bg-gray-100 cursor-pointer ${
-                    selectedTopic === topic ? "bg-blue-50 text-blue-600" : ""
-                  }`}
-                >
-                  {topic}
-                </div>
-              ))}
-            </div>
+            {isFilterOpen && (
+              <div className="absolute mt-2 w-40 bg-white rounded-lg shadow-lg overflow-hidden z-10">
+                {topics.map((topic) => (
+                  <div
+                    key={topic}
+                    onClick={() => {
+                      setSelectedTopic(topic);
+                      setIsFilterOpen(false);
+                    }}
+                    className={`px-4 py-2 text-gray-700 hover:bg-gray-100 cursor-pointer ${
+                      selectedTopic === topic ? "bg-blue-50 text-blue-600" : ""
+                    }`}
+                  >
+                    {topic}
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         </div>
 
