@@ -1,0 +1,63 @@
+/* Estilos del footer */
+.footer {
+    display: flex;
+    flex-direction: column; /* Permite que los elementos se dispongan en varias líneas */
+    align-items: center;
+    padding: 20px 40px;
+    background-color: #1a1a1a; /* Fondo gris oscuro */
+    box-shadow: 0 -4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Contenedor del logo */
+.logoContainer {
+    margin-bottom: 20px; /* Espaciado inferior para separar del nav */
+}
+
+/* Estilos del enlace del logo */
+.logoLink {
+    color: #ffffff;
+    font-size: 24px;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+/* Estilos del nav, para los elementos en fila */
+.nav {
+    display: flex;
+    flex-wrap: wrap; /* Permite que los elementos se dispongan en varias líneas */
+    justify-content: center; /* Centra los elementos */
+    margin-bottom: 20px; /* Espaciado inferior para separar de las redes sociales */
+}
+
+/* Estilos de los enlaces dentro del nav */
+.navItem {
+    margin: 10px 20px; /* Espaciado entre los elementos del nav */
+    cursor: pointer;
+    color: #ffffff; /* Color del texto */
+    font-size: 20px;
+    text-decoration: none;
+    transition: color 0.3s;
+}
+
+.navItem:hover {
+    color: #007BFF; /* Color del texto al hacer hover */
+}
+
+/* Estilos de los iconos de redes sociales */
+.socialMedia {
+    display: flex;
+    justify-content: center; /* Centra los iconos */
+    flex-wrap: wrap; /* Permite que los iconos se dispongan en varias líneas */
+}
+
+.socialIcon {
+    margin: 10px 20px;
+    color: #ffffff;
+    font-size: 20px;
+    text-decoration: none;
+    transition: color 0.3s;
+}
+
+.socialIcon:hover {
+    color: #007BFF; /* Color del texto al hacer hover */
+}
