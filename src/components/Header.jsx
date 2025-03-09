@@ -23,8 +23,8 @@ const Header = () => {
         <Link href="/">
           <h3 className={`${styles.navItem} ${currentPath === '/' ? styles.active : ''}`}>Descarga</h3>
         </Link>
-        <Link href="/about">
-          <h3 className={`${styles.navItem} ${currentPath === '/about' ? styles.active : ''}`}>About Us</h3>
+        <Link href="/nosotros">
+          <h3 className={`${styles.navItem} ${currentPath === '/about' ? styles.active : ''}`}>Sobre nosotros</h3>
         </Link>
         <Link href="/blog">
           <h3 className={`${styles.navItem} ${currentPath === '/blog' ? styles.active : ''}`}>Blog</h3>
