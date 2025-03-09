@@ -4,10 +4,12 @@ import React from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useAuth } from '../context/AuthContext'; // Importa el contexto de autenticación
 import styles from './Header.module.css'; // Módulo CSS para estilos
 
 const Header = () => {
   const currentPath = usePathname();
+  const { user } = useAuth(); // Obtén el usuario del contexto de autenticación
 
   return (
     <header className={styles.header}>
@@ -24,7 +26,7 @@ const Header = () => {
           <h3 className={`${styles.navItem} ${currentPath === '/' ? styles.active : ''}`}>Descarga</h3>
         </Link>
         <Link href="/nosotros">
-          <h3 className={`${styles.navItem} ${currentPath === '/about' ? styles.active : ''}`}>Sobre nosotros</h3>
+          <h3 className={`${styles.navItem} ${currentPath === '/nosotros' ? styles.active : ''}`}>Sobre nosotros</h3>
         </Link>
         <Link href="/blog">
           <h3 className={`${styles.navItem} ${currentPath === '/blog' ? styles.active : ''}`}>Blog</h3>
@@ -62,9 +64,13 @@ const Header = () => {
           </button>
         </div>
       </form>
-      <Link href="/login">
-        <button className={styles.loginButton}>Iniciar sesión</button>
-      </Link>
+      {user ? (
+        <span className={styles.navItem}>Hola, {user.email}</span>
+      ) : (
+        <Link href="/login">
+          <button className={styles.loginButton}>Iniciar sesión</button>
+        </Link>
+      )}
     </header>
   );
 };

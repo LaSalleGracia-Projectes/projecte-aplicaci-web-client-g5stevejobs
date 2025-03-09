@@ -1,6 +1,7 @@
-import './globals.css'; // Estilos globales opcionales
-import Header from '../components/Header'; // Importa el Header desde un componente separado
-import Footer from '../components/Footer'; // Importa el Footer desde un componente separado
+import './globals.css';
+import Header from '../components/Header';
+import Footer from '../components/Footer';
+import { AuthProvider } from '../context/AuthContext';
 
 export const metadata = {
   title: 'The Abyss',
@@ -11,12 +12,11 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body>
-        {/* Aquí va el header que se aplicará globalmente */}
-        <Header />
-        {/* Renderiza el contenido específico de cada página */}
-        {children}
-        {/* Aquí va el footer que se aplicará globalmente */}
-        <Footer />
+        <AuthProvider>
+          <Header />
+          {children}
+          <Footer />
+        </AuthProvider>
       </body>
     </html>
   );
