@@ -147,7 +147,7 @@ const ForoPage = () => {
             {threads.map((thread, index) => (
               <div
                 key={index}
-                onClick={() => router.push(`/foro/${thread.title.toLowerCase().replace(/\s+/g, '-')}`)}
+                onClick={() => router.push(`/foro/${thread.id}`)}
                 className="p-6 bg-gray-800 rounded-lg shadow hover:shadow-lg transition-all cursor-pointer"
               >
                 <h3 className="text-lg font-semibold mb-2">

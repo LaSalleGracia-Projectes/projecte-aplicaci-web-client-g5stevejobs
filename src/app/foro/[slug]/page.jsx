@@ -1,61 +1,32 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useParams } from 'next/navigation';
+import { supabase } from "../../../supabaseClient";
 
 const ForumDiscussionPage = () => {
   const { slug } = useParams();
-
-  const [comments, setComments] = useState([
-    {
-      author: "User1",
-      content: "This is the first comment on this topic!",
-      postedAt: "2 hours ago",
-    },
-    {
-      author: "User2",
-      content: "I agree with the points mentioned above.",
-      postedAt: "1 hour ago",
-    },
-  ]);
-
+  const [thread, setThread] = useState(null);
+  const [comments, setComments] = useState([]);
   const [newComment, setNewComment] = useState("");
 
-  const forumTopics = {
-    "pinned-topic-1": {
-      title: "Pinned Topic 1",
-      description: "Discussion about Pinned Topic 1.",
-      author: "Username1",
-      postedDate: "xx of December of 202X",
-      upvotes: 222,
-      commentsCount: comments.length,
-      pinnedTopics: [],
-      otherTopics: [],
-    },
-    "pinned-topic-2": {
-      title: "Pinned Topic 2",
-      description: "Discussion about Pinned Topic 2.",
-      author: "Username2",
-      postedDate: "xx of January of 202X",
-      upvotes: 333,
-      commentsCount: comments.length,
-      pinnedTopics: [],
-      otherTopics: [],
-    },
-    "other-topic-1": {
-      title: "Other Topic 1",
-      description: "Discussion about Other Topic 1.",
-      author: "Username3",
-      postedDate: "xx of February of 202X",
-      upvotes: 111,
-      commentsCount: comments.length,
-      pinnedTopics: [],
-      otherTopics: [],
-    },
-    // Add other topics similarly...
-  };
+  useEffect(() => {
+    const fetchThread = async () => {
+      const { data, error } = await supabase
+        .from("threads")
+        .select("*")
+        .eq("id", slug)
+        .single();
 
-  const forumData = forumTopics[slug] || null;
+      if (error) {
+        console.error("Error fetching thread:", error);
+      } else {
+        setThread(data);
+      }
+    };
+
+    fetchThread();
+  }, [slug]);
 
   const handleCommentSubmit = (e) => {
     e.preventDefault();
@@ -72,10 +43,10 @@ const ForumDiscussionPage = () => {
     }
   };
 
-  if (!forumData) {
+  if (!thread) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <p className="text-gray-600">Forum not found.</p>
+        <p className="text-gray-600">Thread not found.</p>
       </div>
     );
   }
@@ -86,14 +57,14 @@ const ForumDiscussionPage = () => {
         {/* Forum Header */}
         <header className="mb-6">
           <h1 className="text-3xl font-bold text-gray-100 mb-2">
-            {forumData.title}
+            {thread.title}
           </h1>
-          <p className="text-gray-400 mb-4">{forumData.description}</p>
+          <p className="text-gray-400 mb-4">{thread.content}</p>
           <div className="text-sm text-gray-500 flex gap-4">
-            <span>Posted by: {forumData.author}</span>
-            <span>On: {forumData.postedDate}</span>
-            <span>Upvotes: {forumData.upvotes}</span>
-            <span>Comments: {forumData.commentsCount}</span>
+            <span>Posted by: {thread.username}</span>
+            <span>On: {new Date(thread.posteddate).toLocaleDateString()}</span>
+            <span>Last post: {new Date(thread.lastpost).toLocaleDateString()}</span>
+            <span>Status: {thread.status}</span>
           </div>
         </header>
 
