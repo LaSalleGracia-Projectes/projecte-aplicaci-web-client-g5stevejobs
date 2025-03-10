@@ -1,4 +1,4 @@
-'use client'; // Si necesitas interacción del cliente (por ejemplo, para manejar eventos)
+'use client';
 
 import React from 'react';
 import Image from 'next/image';
@@ -9,7 +9,7 @@ import styles from './Header.module.css'; // Módulo CSS para estilos
 
 const Header = () => {
   const currentPath = usePathname();
-  const { user } = useAuth(); // Obtén el usuario del contexto de autenticación
+  const { user, username } = useAuth(); // Obtén el usuario y el nombre de usuario del contexto de autenticación
 
   return (
     <header className={styles.header}>
@@ -65,7 +65,7 @@ const Header = () => {
         </div>
       </form>
       {user ? (
-        <span className={styles.navItem}>Hola, {user.email}</span>
+        <span className={styles.navItem}>Hola, {username}</span>
       ) : (
         <Link href="/login">
           <button className={styles.loginButton}>Iniciar sesión</button>

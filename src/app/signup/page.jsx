@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import React, { useState } from "react";
 import Link from "next/link";
@@ -7,18 +7,42 @@ import { supabase } from "../../supabaseClient";
 const SignUp = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [username, setUsername] = useState("");
   const [error, setError] = useState(null);
 
   const handleSignUp = async (e) => {
     e.preventDefault();
-    const { user, error } = await supabase.auth.signUp({
+
+    // Verificar si el nombre de usuario ya existe
+    const { data: existingUser } = await supabase
+      .from('profiles')
+      .select('username')
+      .eq('username', username)
+      .single();
+
+    if (existingUser) {
+      setError('El nombre de usuario ya está en uso.');
+      return;
+    }
+
+    const { data, error } = await supabase.auth.signUp({
       email,
       password,
     });
+
     if (error) {
       setError(error.message);
     } else {
-      alert("Check your email for the confirmation link!");
+      // Guardar el nombre de usuario en la base de datos
+      const { error: dbError } = await supabase
+        .from('profiles')
+        .insert([{ id: data.user.id, username }]);
+
+      if (dbError) {
+        setError(dbError.message);
+      } else {
+        alert("Check your email for the confirmation link!");
+      }
     }
   };
 
@@ -46,6 +70,13 @@ const SignUp = () => {
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
+            className="w-full border border-gray-600 rounded p-2 mb-4 bg-gray-700 text-gray-100"
+          />
+          <label className="block mb-2 text-gray-300">Nombre de usuario:</label>
+          <input
+            type="text"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
             className="w-full border border-gray-600 rounded p-2 mb-4 bg-gray-700 text-gray-100"
           />
           <button className="w-full bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-500">
