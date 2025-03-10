@@ -13,7 +13,7 @@ const CreateTopicPage = () => {
   const [content, setContent] = useState("");
   const [error, setError] = useState(null);
   const [username, setUsername] = useState("");
-  const topics = ["Offtopic", "Bugs", "Announcements", "Feedback"];
+  const topics = ["Offtopic", "Bugs", "Anuncios", "Feedback"];
 
   useEffect(() => {
     const fetchUsername = async () => {
