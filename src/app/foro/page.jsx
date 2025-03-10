@@ -18,19 +18,13 @@ const ForoPage = () => {
       title: "Tema Fijado 1",
       topic: "Offtopic",
       username: "Usuario1",
-      comments: 222,
       posteddate: "2023-12-01T12:00:00Z",
-      lastpost: "2023-12-01T12:00:00Z",
-      status: "Inactivo",
     },
     {
       title: "Tema Fijado 2",
       topic: "Bugs",
       username: "Usuario2",
-      comments: 333,
       posteddate: "2023-12-02T14:30:00Z",
-      lastpost: "2023-12-02T14:30:00Z",
-      status: "Inactivo",
     },
   ];
 
@@ -136,11 +130,9 @@ const ForoPage = () => {
                   <p className="text-gray-500 text-sm">Publicado por {topic.username}</p>
                   <div className="mt-4 flex flex-col items-end text-sm text-gray-500">
                     <p>Publicado el {formatDate(topic.posteddate)}</p>
-                    <p>{formatLastActivity(topic.lastpost)}</p>
                   </div>
                   <div className="mt-4 flex justify-between items-center text-sm text-gray-600">
                     <span>Tema: {topic.topic}</span>
-                    <span>Comentarios: {topic.comments}</span>
                     <span>{topic.status}</span>
                   </div>
                 </div>
