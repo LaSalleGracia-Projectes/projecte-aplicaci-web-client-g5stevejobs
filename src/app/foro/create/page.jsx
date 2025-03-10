@@ -38,12 +38,12 @@ const CreateTopicPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!title || !content) {
-      setError("Title and content are required.");
+      setError("El título y el contenido son obligatorios.");
       return;
     }
 
     if (!username) {
-      setError("Username is required.");
+      setError("El nombre de usuario es obligatorio.");
       return;
     }
 
@@ -56,7 +56,7 @@ const CreateTopicPage = () => {
       content,
       posteddate: currentDate,
       lastpost: currentDate,
-      status: "Active",
+      status: "Activo", // Cambiado a "Activo"
     };
 
     console.log("Data to be sent:", newThread);
@@ -67,27 +67,27 @@ const CreateTopicPage = () => {
         .insert([newThread]);
 
       if (error) {
-        console.error("Error creating topic:", error);
-        console.error("Error details:", error.details);
-        console.error("Error hint:", error.hint);
+        console.error("Error creando el hilo:", error);
+        console.error("Detalles del error:", error.details);
+        console.error("Pista del error:", error.hint);
         if (error.status === 400) {
-          setError("Bad request. Please check your input.");
+          setError("Solicitud incorrecta. Por favor, revisa tu entrada.");
         } else {
-          setError(error.message || "An unknown error occurred");
+          setError(error.message || "Ocurrió un error desconocido");
         }
       } else {
         router.push("/foro");
       }
     } catch (err) {
-      console.error("Unexpected error:", err);
-      setError(err.message || "An unexpected error occurred");
+      console.error("Error inesperado:", err);
+      setError(err.message || "Ocurrió un error inesperado");
     }
   };
 
   if (!user) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <p className="text-gray-600">You must be logged in to create a topic.</p>
+        <p className="text-gray-600">Debes estar registrado para crear un hilo.</p>
       </div>
     );
   }
@@ -95,39 +95,39 @@ const CreateTopicPage = () => {
   return (
     <div className="bg-gray-850 min-h-screen text-white">
       <main className="container mx-auto px-6 py-8">
-        <h1 className="text-3xl font-bold mb-6">Create a New Topic</h1>
+        <h1 className="text-3xl font-bold mb-6">Crear un nuevo hilo</h1>
         <form onSubmit={handleSubmit} className="space-y-6">
           {error && <p className="text-red-500">{error}</p>}
           <div>
-            <label className="block text-sm font-medium text-gray-300">Title</label>
+            <label className="block text-sm font-medium text-gray-300">Título</label>
             <input
               type="text"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              className="w-full px-4 py-2 border rounded-lg focus:ring focus:ring-blue-300 focus:outline-none"
+              className="w-full px-4 py-2 border rounded-lg focus:ring focus:ring-blue-300 focus:outline-none text-black"
               required
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-300">Topic</label>
+            <label className="block text-sm font-medium text-gray-300">Tema</label>
             <select
               value={topic}
               onChange={(e) => setTopic(e.target.value)}
-              className="w-full px-4 py-2 border rounded-lg focus:ring focus:ring-blue-300 focus:outline-none"
+              className="w-full px-4 py-2 border rounded-lg focus:ring focus:ring-blue-300 focus:outline-none text-black"
             >
               {topics.map((topic) => (
-                <option key={topic} value={topic}>
+                <option key={topic} value={topic} className="text-black">
                   {topic}
                 </option>
               ))}
             </select>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-300">Content</label>
+            <label className="block text-sm font-medium text-gray-300">Contenido</label>
             <textarea
               value={content}
               onChange={(e) => setContent(e.target.value)}
-              className="w-full px-4 py-2 border rounded-lg focus:ring focus:ring-blue-300 focus:outline-none"
+              className="w-full px-4 py-2 border rounded-lg focus:ring focus:ring-blue-300 focus:outline-none text-black"
               rows="6"
               required
             />
@@ -136,7 +136,7 @@ const CreateTopicPage = () => {
             type="submit"
             className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:ring focus:ring-blue-300"
           >
-            Create Topic
+            Crear hilo
           </button>
         </form>
       </main>
