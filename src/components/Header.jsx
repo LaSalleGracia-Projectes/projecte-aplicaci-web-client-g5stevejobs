@@ -1,15 +1,23 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useAuth } from '../context/AuthContext'; // Importa el contexto de autenticación
+import { supabase } from '../supabaseClient'; // Importa el cliente de Supabase
 import styles from './Header.module.css'; // Módulo CSS para estilos
 
 const Header = () => {
   const currentPath = usePathname();
   const { user, username } = useAuth(); // Obtén el usuario y el nombre de usuario del contexto de autenticación
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    // Redirigir al usuario a la página de inicio de sesión o a otra página
+    window.location.href = '/login';
+  };
 
   return (
     <header className={styles.header}>
@@ -65,7 +73,15 @@ const Header = () => {
         </div>
       </form>
       {user ? (
-        <span className={styles.navItem}>Hola, {username}</span>
+        <div className={styles.userMenu} onMouseEnter={() => setIsDropdownOpen(true)} onMouseLeave={() => setIsDropdownOpen(false)}>
+          <span className={styles.navItem}>{username}</span>
+          {isDropdownOpen && (
+            <div className={styles.dropdownMenu}>
+              <Link href="/perfil" className={styles.dropdownItem}>Mi perfil</Link>
+              <button onClick={handleLogout} className={`${styles.dropdownItem} ${styles.logoutItem}`}>Cerrar sesión</button>
+            </div>
+          )}
+        </div>
       ) : (
         <Link href="/login">
           <button className={styles.loginButton}>Iniciar sesión</button>

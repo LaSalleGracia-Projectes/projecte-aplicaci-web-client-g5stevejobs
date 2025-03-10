@@ -10,37 +10,37 @@
     position: sticky;
     top: 0;
     z-index: 1000;
-}
-
-/* Contenedor del logo */
-.logoContainer {
+  }
+  
+  /* Contenedor del logo */
+  .logoContainer {
     display: flex;
     align-items: center;
-}
-
-/* Estilos del nav, para los elementos en fila */
-.nav {
+  }
+  
+  /* Estilos del nav, para los elementos en fila */
+  .nav {
     display: flex;
     justify-content: space-evenly; /* Repartir los elementos uniformemente */
     flex: 1; /* Hace que el nav ocupe el espacio restante */
     align-items: center;
-}
-
-/* Estilos de los h3 dentro del nav */
-.navItem {
+  }
+  
+  /* Estilos de los h3 dentro del nav */
+  .navItem {
     margin: 0 20px; /* Espaciado entre los elementos del nav */
     cursor: pointer;
     color: #ffffff; /* Color del texto */
     font-size: 20px;
     position: relative;
     transition: color 0.3s;
-}
-
-.navItem:hover {
+  }
+  
+  .navItem:hover {
     color: #007BFF; /* Color del texto al hacer hover */
-}
-
-.navItem::after {
+  }
+  
+  .navItem::after {
     content: '';
     display: block;
     width: 0;
@@ -50,32 +50,32 @@
     position: absolute;
     bottom: -5px;
     left: 0;
-}
-
-.navItem:hover::after {
+  }
+  
+  .navItem:hover::after {
     width: 100%;
-}
-
-.active::after {
+  }
+  
+  .active::after {
     width: 100%;
-}
-
-/* Estilos de la barra de búsqueda */
-.searchBar {
+  }
+  
+  /* Estilos de la barra de búsqueda */
+  .searchBar {
     position: relative;
     display: flex;
     align-items: center;
-}
-
-/* Estilos del contenedor de búsqueda */
-.searchContainer {
+  }
+  
+  /* Estilos del contenedor de búsqueda */
+  .searchContainer {
     position: relative;
     display: flex;
     align-items: center;
-}
-
-/* Estilos del input de búsqueda */
-.searchInput {
+  }
+  
+  /* Estilos del input de búsqueda */
+  .searchInput {
     padding: 12px;
     padding-right: 45px;
     border: 1px solid #444;
@@ -86,10 +86,10 @@
     box-sizing: border-box;
     background-color: #2e2e2e; /* Fondo gris más claro */
     color: #ffffff; /* Color del texto */
-}
-
-/* Estilos del botón de búsqueda */
-.searchIcon {
+  }
+  
+  /* Estilos del botón de búsqueda */
+  .searchIcon {
     position: absolute;
     right: 10px;
     background: none;
@@ -99,32 +99,32 @@
     display: flex;
     align-items: center;
     justify-content: center;
-}
-
-/* Estilos para las imágenes dentro del botón */
-.staticIcon,
-.hoverIcon {
+  }
+  
+  /* Estilos para las imágenes dentro del botón */
+  .staticIcon,
+  .hoverIcon {
     width: 40px;
     height: 40px;
-}
-
-/* Efectos para la imagen en hover */
-.hoverIcon {
+  }
+  
+  /* Efectos para la imagen en hover */
+  .hoverIcon {
     position: absolute;
     opacity: 0;
-}
-
-/* Cambiar la visibilidad de las imágenes al hacer hover */
-.searchIcon:hover .staticIcon {
+  }
+  
+  /* Cambiar la visibilidad de las imágenes al hacer hover */
+  .searchIcon:hover .staticIcon {
     opacity: 0;
-}
-
-.searchIcon:hover .hoverIcon {
+  }
+  
+  .searchIcon:hover .hoverIcon {
     opacity: 1;
-}
-
-/* Estilos del botón de inicio de sesión */
-.loginButton {
+  }
+  
+  /* Estilos del botón de inicio de sesión */
+  .loginButton {
     padding: 14px 24px;
     font-size: 18px;
     background-color: #007BFF;
@@ -132,9 +132,52 @@
     border: none;
     border-radius: 10px;
     cursor: pointer;
-    margin-left: 20px; /* Separación con la barra de búsqueda */
-}
-
-.loginButton:hover {
+    margin-left: 40px; /* Separación con la barra de búsqueda */
+  }
+  
+  .loginButton:hover {
     background-color: #0056b3;
-}
+  }
+  
+  /* Estilos del menú de usuario */
+  .userMenu {
+    position: relative;
+    display: inline-block;
+    margin-left: 40px; /* Añadir margen izquierdo para dejar más espacio */
+  }
+  
+  .dropdownMenu {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background-color: #333;
+    border: 1px solid #444;
+    border-radius: 4px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    z-index: 1;
+    min-width: 160px;
+  }
+  
+  .dropdownItem {
+    display: block;
+    width: 100%; /* Asegura que el elemento ocupe todo el ancho del contenedor */
+    padding: 12px 16px;
+    color: #fff;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    text-align: left; /* Alinea el texto a la izquierda */
+  }
+  
+  .dropdownItem:hover {
+    background-color: #555;
+  }
+  
+  .logoutItem {
+    width: 100%; /* Asegura que el elemento ocupe todo el ancho del contenedor */
+    text-align: left; /* Alinea el texto a la izquierda */
+  }
+  
+  .logoutItem:hover {
+    background-color: #ff4d4d;
+  }
