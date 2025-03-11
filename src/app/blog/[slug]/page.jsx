@@ -1,34 +1,42 @@
 'use client';
 
 import { useParams } from 'next/navigation';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm'; // Soporte para tablas, listas de tareas, etc.
+import rehypeRaw from 'rehype-raw'; // Para permitir HTML en el Markdown
 
-// Simularemos algunos datos para los blogs, autores y comentarios
 const blogData = {
   "blog-1": {
-    title: "Blog 1",
-    content: "Este es el contenido completo del Blog 1. Aquí está toda la información relevante sobre el tema del blog.",
+    title: "Pausa",
+    content: `
+      Nos complace anunciar una nueva funcionalidad en nuestro juego: el menú de pausa. 
+      Este menú ha sido desarrollado por nuestros talentosos desarrolladores Fan e Iván, quienes 
+      han trabajado arduamente para ofrecer una experiencia de usuario fluida y eficiente.
+
+      El menú de pausa permite a los jugadores detener el juego en cualquier momento y acceder a 
+      una variedad de opciones útiles. Entre las características principales del menú de pausa se 
+      incluyen:
+
+      - **Reanudar juego**: Permite a los jugadores continuar desde donde dejaron.
+      - **Reiniciar sala**: Para reiniciar el nivel.
+      - **Salir**: Para salir del juego.
+
+      Fan e Iván han puesto un gran esfuerzo en asegurarse de que el menú de pausa sea intuitivo 
+      y fácil de usar. Han realizado múltiples pruebas y ajustes para garantizar que funcione sin 
+      problemas en todas las plataformas.
+
+      Estamos muy orgullosos del trabajo realizado por Fan e Iván y estamos seguros de que los 
+      jugadores apreciarán esta nueva funcionalidad. ¡Esperamos que disfruten del nuevo menú de 
+      pausa tanto como nosotros disfrutamos creándolo!
+    `,
+    image: "/images/menupausa.jpg",
     author: {
-      name: "Juan Pérez",
-      avatar: "/images/juan.jpg", // Asegúrate de tener una imagen en esa ruta
+      name: "Adrián Lozano",
+      avatar: "/images/logo-abyss.png",
       bio: "Desarrollador web y entusiasta de las nuevas tecnologías.",
     },
-    date: "2023-12-01",
-    comments: [
-      {
-        id: 1,
-        username: "Carlos",
-        comment: "¡Excelente blog! Me encantó la información.",
-        date: "2023-12-02",
-      },
-      {
-        id: 2,
-        username: "Ana",
-        comment: "Muy interesante, ¡seguiré leyendo tus publicaciones!",
-        date: "2023-12-03",
-      },
-    ],
+    date: "09-03-2025",
   },
-  // Similar para otros blogs...
 };
 
 const BlogPostPage = () => {
@@ -36,72 +44,45 @@ const BlogPostPage = () => {
   const blog = blogData[slug];
 
   if (!blog) {
-    return <div>Blog no encontrado</div>;
+    return <div className="text-center text-red-500">Blog no encontrado</div>;
   }
 
   return (
-    <div className="p-6 bg-gray-850 min-h-screen text-white">
-      {/* Titulo y contenido del blog */}
-      <article className="max-w-4xl mx-auto bg-gray-800 p-6 rounded-lg shadow-lg mb-8">
-        <h1 className="text-3xl font-bold text-gray-100 mb-4">{blog.title}</h1>
-        <p className="text-gray-400 mb-4">Publicado el {blog.date}</p>
-        <div className="text-gray-300">
-          <p>{blog.content}</p>
+    <div className="p-6 bg-gray-900 min-h-screen text-white flex flex-col items-center">
+      <article className="max-w-4xl w-full bg-gray-800 p-6 rounded-lg shadow-lg mb-8">
+        <h1 className="text-3xl font-bold text-gray-100 mb-2">{blog.title}</h1>
+        <p className="text-gray-400 text-sm mb-4">Publicado el {blog.date}</p>
+        
+        {/* Imagen dentro del artículo */}
+        {blog.image && (
+          <img
+            src={blog.image}
+            alt={`Imagen de ${blog.title}`}
+            className="w-full rounded-lg mb-4"
+          />
+        )}
+
+        <div className="prose prose-invert text-gray-300">
+          <ReactMarkdown
+            remarkPlugins={[remarkGfm]}
+            rehypePlugins={[rehypeRaw]}
+          >
+            {blog.content}
+          </ReactMarkdown>
         </div>
       </article>
 
       {/* Autor del blog */}
-      <section className="author-section bg-gray-800 p-6 rounded-lg shadow-lg mb-8">
-        <h2 className="text-2xl font-semibold text-gray-100 mb-4">Sobre el autor</h2>
-        <div className="flex items-center gap-4">
-          <img
-            src={blog.author.avatar}
-            alt={blog.author.name}
-            className="w-16 h-16 rounded-full object-cover"
-          />
-          <div>
-            <h3 className="text-xl font-semibold text-gray-100">{blog.author.name}</h3>
-            <p className="text-sm text-gray-400">{blog.author.bio}</p>
-          </div>
+      <section className="max-w-4xl w-full bg-gray-800 p-6 rounded-lg shadow-lg flex items-center gap-4">
+        <img
+          src={blog.author.avatar}
+          alt={blog.author.name}
+          className="w-16 h-16 rounded-full object-cover border-2 border-gray-700"
+        />
+        <div>
+          <h3 className="text-xl font-semibold text-gray-100">{blog.author.name}</h3>
+          <p className="text-sm text-gray-400">{blog.author.bio}</p>
         </div>
-      </section>
-
-      {/* Sección de comentarios */}
-      <section className="comments-section bg-gray-800 p-6 rounded-lg shadow-lg">
-        <h2 className="text-2xl font-semibold text-gray-100 mb-4">Comentarios</h2>
-        <div className="space-y-4">
-          {blog.comments.map((comment) => (
-            <div key={comment.id} className="comment bg-gray-700 p-4 rounded-lg shadow-sm">
-              <p className="font-semibold text-gray-100">{comment.username}</p>
-              <p className="text-sm text-gray-400 mb-2">{comment.date}</p>
-              <p className="text-gray-300">{comment.comment}</p>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* Formulario para agregar un comentario */}
-      <section className="comment-form bg-gray-800 p-6 rounded-lg shadow-lg mt-8">
-        <h2 className="text-2xl font-semibold text-gray-100 mb-4">Deja un comentario</h2>
-        <form className="space-y-4">
-          <div>
-            <input
-              type="text"
-              placeholder="Tu nombre"
-              className="w-full p-3 border border-gray-600 rounded-lg bg-gray-700 text-gray-100"
-            />
-          </div>
-          <div>
-            <textarea
-              placeholder="Escribe tu comentario..."
-              className="w-full p-3 border border-gray-600 rounded-lg bg-gray-700 text-gray-100"
-              rows="4"
-            ></textarea>
-          </div>
-          <button type="submit" className="w-full bg-blue-600 text-white p-3 rounded-lg hover:bg-blue-500">
-            Enviar comentario
-          </button>
-        </form>
       </section>
     </div>
   );

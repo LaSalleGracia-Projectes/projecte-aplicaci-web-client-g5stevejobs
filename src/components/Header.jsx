@@ -23,10 +23,10 @@ const Header = () => {
     <header className={styles.header}>
       <div className={styles.logoContainer}>
         <Image
-          src="/images/placeholder.png" // Placeholder para el logo
+          src="/images/logo-abyss.png" // Placeholder para el logo
           alt="logoTheAbyss"
-          width={200}
-          height={70}
+          width={80}
+          height={50}
         />
       </div>
       <nav className={styles.nav}>

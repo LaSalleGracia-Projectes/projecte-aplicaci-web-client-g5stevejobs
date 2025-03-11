@@ -61,19 +61,17 @@ const SoportePage = () => {
           <div className="flex flex-col lg:flex-row items-center gap-6">
             <div className="flex-shrink-0">
               <img
-                src="/images/placeholder.png"
+                src="/images/attack.jpg"
                 alt="Learn More"
                 className="w-40 h-40 rounded-lg object-cover bg-gray-700"
               />
             </div>
             <div className="flex-1">
               <h2 className="text-2xl font-bold mb-3 text-gray-100">
-                Learn More
+                Descubre más
               </h2>
               <p className="mb-4 text-gray-300">
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec
-                accumsan, nisi ut suscipit tincidunt, felis libero aliquet nisl,
-                ut ultricies risus leo vitae metus.
+                Sumergete en el mundo y su única historia de The Abyss basasdo en el anime 'Made in Abyss'.
               </p>
               <button className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-500">
                 Ir a Descargar

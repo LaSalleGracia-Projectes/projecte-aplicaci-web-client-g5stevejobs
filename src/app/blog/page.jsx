@@ -1,24 +1,33 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 
 const BlogPage = () => {
   const blogs = [
-    { id: 1, title: "Blog 1", slug: "blog-1", date: "2023-12-01", preview: "Contenido inicial del Blog 1..." },
-    { id: 2, title: "Blog 2", slug: "blog-2", date: "2023-11-15", preview: "Contenido inicial del Blog 2..." },
-    { id: 3, title: "Blog 3", slug: "blog-3", date: "2023-10-30", preview: "Contenido inicial del Blog 3..." },
-    { id: 4, title: "Blog 4", slug: "blog-4", date: "2023-10-01", preview: "Contenido inicial del Blog 4..." },
+    { id: 1, title: "Pausa", slug: "blog-1", date: "09-03-2025", preview: "Nueva funcionalidad, nuestro menú de pausa.", thumbnail: "/images/menupausa.jpg" },
+    { id: 2, title: "Blog 2", slug: "blog-2", date: "06-03-2025", preview: "Contenido inicial del Blog 2...", thumbnail: "/images/blog2-thumbnail.jpg" },
+    { id: 3, title: "Blog 3", slug: "blog-3", date: "07-03-2025", preview: "Contenido inicial del Blog 3...", thumbnail: "/images/blog3-thumbnail.jpg" },
+    { id: 4, title: "Blog 4", slug: "blog-4", date: "09-03-2023", preview: "Contenido inicial del Blog 4...", thumbnail: "/images/blog4-thumbnail.jpg" },
   ];
 
   return (
     <div className="bg-gray-850 min-h-screen text-white">
       <main className="px-4 py-6 text-center">
-        <h1 className="text-4xl font-bold text-gray-100 mb-6">BLOG</h1>
+        <h1 className="text-4xl font-bold text-gray-100 mb-6">Blogs</h1>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {blogs.map((blog) => (
             <Link key={blog.id} href={`/blog/${blog.slug}`}>
               <article className="bg-gray-800 shadow-md rounded-lg overflow-hidden cursor-pointer hover:shadow-lg transition-shadow">
-                <div className="h-48 bg-gray-700"></div>
+                <div className="relative h-48 bg-gray-700">
+                  <Image
+                    src={blog.thumbnail}
+                    alt={`Thumbnail for ${blog.title}`}
+                    layout="fill"
+                    objectFit="cover"
+                    className="rounded-t-lg"
+                  />
+                </div>
                 <div className="p-4 text-left">
                   <h2 className="text-xl font-semibold text-gray-100 mb-2">
                     {blog.title}

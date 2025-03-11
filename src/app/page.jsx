@@ -9,14 +9,18 @@ export default function Home() {
       <h1 className="text-6xl font-bold text-center mt-12">The Abyss</h1>
       
       {/* Botón de descarga */}
-      <button className="bg-blue-600 text-white text-4xl px-16 py-8 rounded-lg hover:bg-blue-500">
+      <a
+        href="/downloads/ProyectoDAM.zip"
+        download
+        className="bg-blue-600 text-white text-4xl px-16 py-8 rounded-lg hover:bg-blue-500"
+      >
         Descarga el juego
-      </button>
+      </a>
       
       {/* Div superpuesto con imagen placeholder */}
       <div className="bg-gray-800 p-8 rounded-lg shadow-lg">
         <Image
-          src="/images/placeholder.png"
+          src="/images/abyss-imagen.jpg"
           alt="Información del juego"
           width={800}
           height={400}
