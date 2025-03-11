@@ -4,6 +4,31 @@ import React, { useState, useEffect } from "react";
 import { useParams } from 'next/navigation';
 import { supabase } from "../../../supabaseClient";
 
+const pinnedTopics = [
+  {
+    id: "pinned-1",
+    slug: "tema-fijado-1",
+    title: "Tema Fijado 1",
+    topic: "Offtopic",
+    username: "Usuario1",
+    content: "Contenido del tema fijado 1.",
+    posteddate: "2023-12-01T12:00:00Z",
+    lastpost: "2023-12-02T12:00:00Z",
+    status: "open",
+  },
+  {
+    id: "pinned-2",
+    slug: "tema-fijado-2",
+    title: "Tema Fijado 2",
+    topic: "Bugs",
+    username: "Usuario2",
+    content: "Contenido del tema fijado 2.",
+    posteddate: "2023-12-02T14:30:00Z",
+    lastpost: "2023-12-03T14:30:00Z",
+    status: "closed",
+  },
+];
+
 const ForumDiscussionPage = () => {
   const { slug } = useParams();
   const [thread, setThread] = useState(null);
@@ -12,6 +37,14 @@ const ForumDiscussionPage = () => {
 
   useEffect(() => {
     const fetchThread = async () => {
+      // Buscar en los hilos fijados primero
+      const pinnedThread = pinnedTopics.find(topic => topic.slug === slug);
+      if (pinnedThread) {
+        setThread(pinnedThread);
+        return;
+      }
+
+      // Si no es un hilo fijado, buscar en la base de datos
       const { data, error } = await supabase
         .from("threads")
         .select("*")
@@ -19,9 +52,11 @@ const ForumDiscussionPage = () => {
         .single();
 
       if (error) {
-        console.error("Error fetching thread:", error);
-      } else {
+        console.error("Error fetching thread:", error.message);
+      } else if (data) {
         setThread(data);
+      } else {
+        console.error("Thread not found");
       }
     };
 
@@ -101,6 +136,8 @@ const ForumDiscussionPage = () => {
               placeholder="Write your comment here..."
               className="w-full p-4 border border-gray-600 rounded-lg bg-gray-700 text-gray-100 focus:ring focus:ring-blue-300 focus:outline-none"
               rows="4"
+              id="new-comment"
+              name="new-comment"
             />
             <button
               type="submit"
