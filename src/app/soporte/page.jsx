@@ -1,8 +1,11 @@
 'use client';
 
 import React from 'react';
+import { useRouter } from 'next/navigation';
 
 const SoportePage = () => {
+  const router = useRouter();
+
   return (
     <div className="bg-gray-850 min-h-screen text-white">
       <main className="px-4 py-6">
@@ -71,10 +74,13 @@ const SoportePage = () => {
                 Descubre más
               </h2>
               <p className="mb-4 text-gray-300">
-                Sumergete en el mundo y su única historia de The Abyss basasdo en el anime 'Made in Abyss'.
+                Sumergete en el mundo y su única historia de The Abyss basado en el anime 'Made in Abyss'.
               </p>
-              <button className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-500">
-                Ir a Descargar
+              <button 
+                onClick={() => router.push('/')} 
+                className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-500"
+              >
+                Ir a descargar
               </button>
             </div>
           </div>
