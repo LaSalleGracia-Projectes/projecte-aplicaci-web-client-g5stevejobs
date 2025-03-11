@@ -6,9 +6,9 @@ import Image from 'next/image';
 const BlogPage = () => {
   const blogs = [
     { id: 1, title: "Pausa", slug: "blog-1", date: "09-03-2025", preview: "Nueva funcionalidad, nuestro menú de pausa.", thumbnail: "/images/menupausa.jpg" },
-    { id: 2, title: "Blog 2", slug: "blog-2", date: "06-03-2025", preview: "Contenido inicial del Blog 2...", thumbnail: "/images/blog2-thumbnail.jpg" },
+    { id: 2, title: "Blog 2", slug: "blog-2", date: "08-03-2025", preview: "Contenido inicial del Blog 2...", thumbnail: "/images/blog2-thumbnail.jpg" },
     { id: 3, title: "Blog 3", slug: "blog-3", date: "07-03-2025", preview: "Contenido inicial del Blog 3...", thumbnail: "/images/blog3-thumbnail.jpg" },
-    { id: 4, title: "Blog 4", slug: "blog-4", date: "09-03-2023", preview: "Contenido inicial del Blog 4...", thumbnail: "/images/blog4-thumbnail.jpg" },
+    { id: 4, title: "Blog 4", slug: "blog-4", date: "09-05-2024", preview: "Contenido inicial del Blog 4...", thumbnail: "/images/blog4-thumbnail.jpg" },
   ];
 
   return (
