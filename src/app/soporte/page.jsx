@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import Link from 'next/link';
 
 const SoportePage = () => {
   return (
@@ -50,9 +51,11 @@ const SoportePage = () => {
           </div>
           <div className="text-center mt-6">
             <p className="text-lg">¿Tienes más dudas o problemas?</p>
-            <button className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-500">
-              Contáctanos
-            </button>
+            <Link href="/contacto">
+              <button className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-500">
+                Contáctanos
+              </button>
+            </Link>
           </div>
         </section>
 
