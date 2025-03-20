@@ -7,7 +7,7 @@ const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
-  const [username, setUsername] = useState(null);
+  const [usuario, setUsuario] = useState(null);
 
   useEffect(() => {
     const getSession = async () => {
@@ -15,11 +15,11 @@ export const AuthProvider = ({ children }) => {
       if (session) {
         setUser(session.user);
         const { data: profile } = await supabase
-          .from('profiles')
-          .select('username')
-          .eq('id', session.user.id)
+          .from('perfil')
+          .select('usuario')
+          .eq('id_perfil', session.user.id)
           .single();
-        setUsername(profile?.username ?? null);
+        setUsuario(profile?.usuario ?? null);
       }
     };
 
@@ -30,16 +30,16 @@ export const AuthProvider = ({ children }) => {
         setUser(session.user);
         const fetchProfile = async () => {
           const { data: profile } = await supabase
-            .from('profiles')
-            .select('username')
-            .eq('id', session.user.id)
+            .from('perfil')
+            .select('usuario')
+            .eq('id_perfil', session.user.id)
             .single();
-          setUsername(profile?.username ?? null);
+          setUsuario(profile?.usuario ?? null);
         };
         fetchProfile();
       } else {
         setUser(null);
-        setUsername(null);
+        setUsuario(null);
       }
     });
 
@@ -49,7 +49,7 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   return (
-    <AuthContext.Provider value={{ user, username }}>
+    <AuthContext.Provider value={{ user, usuario }}>
       {children}
     </AuthContext.Provider>
   );

@@ -17,14 +17,14 @@ const ForoPage = () => {
     {
       title: "Tema Fijado 1",
       topic: "Offtopic",
-      username: "Usuario1",
-      posteddate: "2023-12-01T12:00:00Z",
+      usuario: "Usuario1",
+      fecha_publicacion: "2023-12-01T12:00:00Z",
     },
     {
       title: "Tema Fijado 2",
       topic: "Bugs",
-      username: "Usuario2",
-      posteddate: "2023-12-02T14:30:00Z",
+      usuario: "Usuario2",
+      fecha_publicacion: "2023-12-02T14:30:00Z",
     },
   ];
 
@@ -32,10 +32,10 @@ const ForoPage = () => {
 
   useEffect(() => {
     const fetchThreads = async () => {
-      let query = supabase.from("threads").select("*");
+      let query = supabase.from("publicacion").select("*");
 
       if (selectedTopic !== "Todos") {
-        query = query.eq("topic", selectedTopic);
+        query = query.eq("topico", selectedTopic);
       }
 
       const { data, error } = await query;
@@ -127,9 +127,9 @@ const ForoPage = () => {
                   <h3 className="text-lg font-semibold mb-2">
                     {topic.title}
                   </h3>
-                  <p className="text-gray-500 text-sm">Publicado por {topic.username}</p>
+                  <p className="text-gray-500 text-sm">Publicado por {topic.usuario}</p>
                   <div className="mt-4 flex flex-col items-end text-sm text-gray-500">
-                    <p>Publicado el {formatDate(topic.posteddate)}</p>
+                    <p>Publicado el {formatDate(topic.fecha_publicacion)}</p>
                   </div>
                   <div className="mt-4 flex justify-between items-center text-sm text-gray-600">
                     <span>Tema: {topic.topic}</span>
@@ -147,21 +147,21 @@ const ForoPage = () => {
             {threads.map((thread, index) => (
               <div
                 key={index}
-                onClick={() => router.push(`/foro/${thread.id}`)}
+                onClick={() => router.push(`/foro/${thread.id_publicacion}`)}
                 className="p-6 bg-gray-800 rounded-lg shadow hover:shadow-lg transition-all cursor-pointer"
               >
                 <h3 className="text-lg font-semibold mb-2">
-                  {thread.title}
+                  {thread.titulo}
                 </h3>
-                <p className="text-gray-500 text-sm">Publicado por {thread.username}</p>
+                <p className="text-gray-500 text-sm">Publicado por {thread.usuario}</p>
                 <div className="mt-4 flex flex-col items-end text-sm text-gray-500">
-                  <p>Publicado el {formatDate(thread.posteddate)}</p>
-                  <p>{formatLastActivity(thread.lastpost)}</p>
+                  <p>Publicado el {formatDate(thread.fecha_publicacion)}</p>
+                  <p>{formatLastActivity(thread.ultima_publicacion)}</p>
                 </div>
                 <div className="mt-4 flex justify-between items-center text-sm text-gray-600">
-                  <span>Tema: {thread.topic}</span>
+                  <span>Tema: {thread.topico}</span>
                   <span>Comentarios: {thread.comments || 0}</span>
-                  <span>{thread.status}</span>
+                  <span>{thread.estatus ? "Activo" : "Inactivo"}</span>
                 </div>
               </div>
             ))}
