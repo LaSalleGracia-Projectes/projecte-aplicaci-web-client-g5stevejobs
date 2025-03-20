@@ -3,20 +3,29 @@
 import React, { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { useAuth } from '../context/AuthContext'; // Importa el contexto de autenticación
 import { supabase } from '../supabaseClient'; // Importa el cliente de Supabase
 import styles from './Header.module.css'; // Módulo CSS para estilos
 
 const Header = () => {
   const currentPath = usePathname();
-  const { user, username } = useAuth(); // Obtén el usuario y el nombre de usuario del contexto de autenticación
+  const router = useRouter();
+  const { user, usuario } = useAuth(); // Obtén el usuario y el nombre de usuario del contexto de autenticación
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
     // Redirigir al usuario a la página de inicio de sesión o a otra página
     window.location.href = '/login';
+  };
+
+  const handleSearch = (e) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      router.push(`/search?query=${searchQuery.trim()}`);
+    }
   };
 
   return (
@@ -46,12 +55,14 @@ const Header = () => {
           <h3 className={`${styles.navItem} ${currentPath === '/soporte' ? styles.active : ''}`}>Soporte</h3>
         </Link>
       </nav>
-      <form className={styles.searchBar}>
+      <form className={styles.searchBar} onSubmit={handleSearch}>
         <div className={styles.searchContainer}>
           <input
             type="text"
             name="query"
             placeholder="Buscar perfil"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
             className={styles.searchInput}
           />
           <button type="submit" aria-label="Search" className={styles.searchIcon}>
@@ -74,10 +85,10 @@ const Header = () => {
       </form>
       {user ? (
         <div className={styles.userMenu} onMouseEnter={() => setIsDropdownOpen(true)} onMouseLeave={() => setIsDropdownOpen(false)}>
-          <span className={styles.navItem}>{username}</span>
+          <span className={styles.navItem}>{usuario}</span>
           {isDropdownOpen && (
             <div className={styles.dropdownMenu}>
-              <Link href="/perfil" className={styles.dropdownItem}>Mi perfil</Link>
+              <Link href={`/perfil/${usuario}`} className={styles.dropdownItem}>Mi perfil</Link>
               <button onClick={handleLogout} className={`${styles.dropdownItem} ${styles.logoutItem}`}>Cerrar sesión</button>
             </div>
           )}
