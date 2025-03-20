@@ -5,9 +5,8 @@ import Link from "next/link";
 import { supabase } from "../../supabaseClient";
 
 const SignUp = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [username, setUsername] = useState("");
+  const [usuario, setUsuario] = useState("");
+  const [contraseña, setContraseña] = useState("");
   const [error, setError] = useState(null);
 
   const handleSignUp = async (e) => {
@@ -15,9 +14,9 @@ const SignUp = () => {
 
     // Verificar si el nombre de usuario ya existe
     const { data: existingUser } = await supabase
-      .from('profiles')
-      .select('username')
-      .eq('username', username)
+      .from('perfil')
+      .select('usuario')
+      .eq('usuario', usuario)
       .single();
 
     if (existingUser) {
@@ -26,8 +25,8 @@ const SignUp = () => {
     }
 
     const { data, error } = await supabase.auth.signUp({
-      email,
-      password,
+      email: usuario,
+      password: contraseña,
     });
 
     if (error) {
@@ -35,8 +34,8 @@ const SignUp = () => {
     } else {
       // Guardar el nombre de usuario en la base de datos
       const { error: dbError } = await supabase
-        .from('profiles')
-        .insert([{ id: data.user.id, username }]);
+        .from('perfil')
+        .insert([{ id_perfil: data.user.id, usuario }]);
 
       if (dbError) {
         setError(dbError.message);
@@ -58,25 +57,18 @@ const SignUp = () => {
         </p>
         {error && <p className="text-red-500 text-center mb-4">{error}</p>}
         <form onSubmit={handleSignUp}>
-          <label className="block mb-2 text-gray-300">E-mail:</label>
+          <label className="block mb-2 text-gray-300">Usuario:</label>
           <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            type="text"
+            value={usuario}
+            onChange={(e) => setUsuario(e.target.value)}
             className="w-full border border-gray-600 rounded p-2 mb-4 bg-gray-700 text-gray-100"
           />
           <label className="block mb-2 text-gray-300">Contraseña:</label>
           <input
             type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="w-full border border-gray-600 rounded p-2 mb-4 bg-gray-700 text-gray-100"
-          />
-          <label className="block mb-2 text-gray-300">Nombre de usuario:</label>
-          <input
-            type="text"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
+            value={contraseña}
+            onChange={(e) => setContraseña(e.target.value)}
             className="w-full border border-gray-600 rounded p-2 mb-4 bg-gray-700 text-gray-100"
           />
           <button className="w-full bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-500">

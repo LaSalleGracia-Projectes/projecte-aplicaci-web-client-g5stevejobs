@@ -10,22 +10,22 @@ const pinnedTopics = [
     slug: "tema-fijado-1",
     title: "Tema Fijado 1",
     topic: "Offtopic",
-    username: "Usuario1",
-    content: "Contenido del tema fijado 1.",
-    posteddate: "2023-12-01T12:00:00Z",
-    lastpost: "2023-12-02T12:00:00Z",
-    status: "open",
+    usuario: "Usuario1",
+    contenido: "Contenido del tema fijado 1.",
+    fecha_publicacion: "2023-12-01T12:00:00Z",
+    ultima_publicacion: "2023-12-02T12:00:00Z",
+    estatus: "open",
   },
   {
     id: "pinned-2",
     slug: "tema-fijado-2",
     title: "Tema Fijado 2",
     topic: "Bugs",
-    username: "Usuario2",
-    content: "Contenido del tema fijado 2.",
-    posteddate: "2023-12-02T14:30:00Z",
-    lastpost: "2023-12-03T14:30:00Z",
-    status: "closed",
+    usuario: "Usuario2",
+    contenido: "Contenido del tema fijado 2.",
+    fecha_publicacion: "2023-12-02T14:30:00Z",
+    ultima_publicacion: "2023-12-03T14:30:00Z",
+    estatus: "closed",
   },
 ];
 
@@ -46,9 +46,9 @@ const ForumDiscussionPage = () => {
 
       // Si no es un hilo fijado, buscar en la base de datos
       const { data, error } = await supabase
-        .from("threads")
+        .from("publicacion")
         .select("*")
-        .eq("id", slug)
+        .eq("id_publicacion", slug)
         .single();
 
       if (error) {
@@ -92,14 +92,14 @@ const ForumDiscussionPage = () => {
         {/* Forum Header */}
         <header className="mb-6">
           <h1 className="text-3xl font-bold text-gray-100 mb-2">
-            {thread.title}
+            {thread.titulo}
           </h1>
-          <p className="text-gray-400 mb-4">{thread.content}</p>
+          <p className="text-gray-400 mb-4">{thread.contenido}</p>
           <div className="text-sm text-gray-500 flex gap-4">
-            <span>Posted by: {thread.username}</span>
-            <span>On: {new Date(thread.posteddate).toLocaleDateString()}</span>
-            <span>Last post: {new Date(thread.lastpost).toLocaleDateString()}</span>
-            <span>Status: {thread.status}</span>
+            <span>Posted by: {thread.usuario}</span>
+            <span>On: {new Date(thread.fecha_publicacion).toLocaleDateString()}</span>
+            <span>Last post: {new Date(thread.ultima_publicacion).toLocaleDateString()}</span>
+            <span>Status: {thread.estatus ? "Activo" : "Inactivo"}</span>
           </div>
         </header>
 

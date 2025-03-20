@@ -8,41 +8,41 @@ import { supabase } from "../../../supabaseClient";
 const CreateTopicPage = () => {
   const { user } = useAuth();
   const router = useRouter();
-  const [title, setTitle] = useState("");
-  const [topic, setTopic] = useState("Offtopic");
-  const [content, setContent] = useState("");
+  const [titulo, setTitulo] = useState("");
+  const [topico, setTopico] = useState("Offtopic");
+  const [contenido, setContenido] = useState("");
   const [error, setError] = useState(null);
-  const [username, setUsername] = useState("");
+  const [usuario, setUsuario] = useState("");
   const topics = ["Offtopic", "Bugs", "Anuncios", "Feedback"];
 
   useEffect(() => {
-    const fetchUsername = async () => {
+    const fetchUsuario = async () => {
       if (user) {
         const { data, error } = await supabase
-          .from("profiles")
-          .select("username")
-          .eq("id", user.id)
+          .from("perfil")
+          .select("usuario")
+          .eq("id_perfil", user.id)
           .single();
 
         if (error) {
-          console.error("Error fetching username:", error);
+          console.error("Error fetching usuario:", error);
         } else {
-          setUsername(data.username);
+          setUsuario(data.usuario);
         }
       }
     };
 
-    fetchUsername();
+    fetchUsuario();
   }, [user]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!title || !content) {
+    if (!titulo || !contenido) {
       setError("El título y el contenido son obligatorios.");
       return;
     }
 
-    if (!username) {
+    if (!usuario) {
       setError("El nombre de usuario es obligatorio.");
       return;
     }
@@ -50,20 +50,20 @@ const CreateTopicPage = () => {
     const currentDate = new Date();
 
     const newThread = {
-      title,
-      topic,
-      username,
-      content,
-      posteddate: currentDate,
-      lastpost: currentDate,
-      status: "Activo", // Cambiado a "Activo"
+      titulo,
+      topico,
+      usuario,
+      contenido,
+      fecha_publicacion: currentDate,
+      ultima_publicacion: currentDate,
+      estatus: true, // Cambiado a true
     };
 
     console.log("Data to be sent:", newThread);
 
     try {
       const { data, error } = await supabase
-        .from("threads")
+        .from("publicacion")
         .insert([newThread]);
 
       if (error) {
@@ -102,8 +102,8 @@ const CreateTopicPage = () => {
             <label className="block text-sm font-medium text-gray-300">Título</label>
             <input
               type="text"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
+              value={titulo}
+              onChange={(e) => setTitulo(e.target.value)}
               className="w-full px-4 py-2 border rounded-lg focus:ring focus:ring-blue-300 focus:outline-none text-black"
               required
             />
@@ -111,8 +111,8 @@ const CreateTopicPage = () => {
           <div>
             <label className="block text-sm font-medium text-gray-300">Tema</label>
             <select
-              value={topic}
-              onChange={(e) => setTopic(e.target.value)}
+              value={topico}
+              onChange={(e) => setTopico(e.target.value)}
               className="w-full px-4 py-2 border rounded-lg focus:ring focus:ring-blue-300 focus:outline-none text-black"
             >
               {topics.map((topic) => (
@@ -125,8 +125,8 @@ const CreateTopicPage = () => {
           <div>
             <label className="block text-sm font-medium text-gray-300">Contenido</label>
             <textarea
-              value={content}
-              onChange={(e) => setContent(e.target.value)}
+              value={contenido}
+              onChange={(e) => setContenido(e.target.value)}
               className="w-full px-4 py-2 border rounded-lg focus:ring focus:ring-blue-300 focus:outline-none text-black"
               rows="6"
               required
