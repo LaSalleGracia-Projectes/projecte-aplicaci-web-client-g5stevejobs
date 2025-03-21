@@ -52,6 +52,11 @@ const Login = () => {
             Inicia sesión
           </button>
         </form>
+        <p className="text-center mt-4 text-gray-300">
+          <Link href="/reset-password" className="text-blue-500">
+            ¿Olvidaste tu contraseña?
+          </Link>
+        </p>
       </div>
     </div>
   );
