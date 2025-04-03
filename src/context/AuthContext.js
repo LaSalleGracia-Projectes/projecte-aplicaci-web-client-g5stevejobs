@@ -7,49 +7,53 @@ const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
-  const [usuario, setUsuario] = useState(null);
+  const [perfil, setPerfil] = useState(null);
 
   useEffect(() => {
-    const getSession = async () => {
+    const fetchSession = async () => {
       const { data: { session } } = await supabase.auth.getSession();
-      if (session) {
+      if (session?.user) {
         setUser(session.user);
-        const { data: profile } = await supabase
-          .from('perfil')
-          .select('usuario')
-          .eq('id_perfil', session.user.id)
+        const { data: profile, error } = await supabase
+          .from("Perfil")
+          .select("*")
+          .eq("ID_perfil", session.user.id)
           .single();
-        setUsuario(profile?.usuario ?? null);
+
+        if (!error) {
+          setPerfil(profile);
+        }
       }
     };
 
-    getSession();
+    fetchSession();
 
-    const { data: authListener } = supabase.auth.onAuthStateChange((event, session) => {
-      if (session) {
+    const { data: subscription } = supabase.auth.onAuthStateChange((event, session) => {
+      if (session?.user) {
         setUser(session.user);
-        const fetchProfile = async () => {
-          const { data: profile } = await supabase
-            .from('perfil')
-            .select('usuario')
-            .eq('id_perfil', session.user.id)
-            .single();
-          setUsuario(profile?.usuario ?? null);
-        };
-        fetchProfile();
+        supabase
+          .from("Perfil")
+          .select("*")
+          .eq("ID_perfil", session.user.id)
+          .single()
+          .then(({ data, error }) => {
+            if (!error) {
+              setPerfil(data);
+            }
+          });
       } else {
         setUser(null);
-        setUsuario(null);
+        setPerfil(null);
       }
     });
 
     return () => {
-      authListener.subscription.unsubscribe();
+      subscription?.unsubscribe();
     };
   }, []);
 
   return (
-    <AuthContext.Provider value={{ user, usuario }}>
+    <AuthContext.Provider value={{ user, perfil }}>
       {children}
     </AuthContext.Provider>
   );
