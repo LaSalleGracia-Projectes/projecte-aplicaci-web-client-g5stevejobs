@@ -5,6 +5,8 @@ import { supabase } from "../../supabaseClient";
 
 const ResetPassword = () => {
   const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
 
@@ -12,6 +14,11 @@ const ResetPassword = () => {
     e.preventDefault();
     setError(null);
     setSuccess(null);
+
+    if (password !== confirmPassword) {
+      setError("Las contraseñas no coinciden.");
+      return;
+    }
 
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
       redirectTo: `${window.location.origin}/update-password`,
@@ -37,6 +44,23 @@ const ResetPassword = () => {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             className="w-full border border-gray-600 rounded p-2 mb-4 bg-gray-700 text-gray-100"
+            required
+          />
+          <label className="block mb-2 text-gray-300">Nueva Contraseña:</label>
+          <input
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            className="w-full border border-gray-600 rounded p-2 mb-4 bg-gray-700 text-gray-100"
+            required
+          />
+          <label className="block mb-2 text-gray-300">Confirmar Nueva Contraseña:</label>
+          <input
+            type="password"
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+            className="w-full border border-gray-600 rounded p-2 mb-4 bg-gray-700 text-gray-100"
+            required
           />
           <button className="w-full bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-500">
             Enviar enlace de restablecimiento

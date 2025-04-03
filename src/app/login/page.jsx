@@ -18,13 +18,14 @@ const Login = () => {
     setLoading(true);
 
     try {
-      // Primero intentamos obtener el email si el usuario ingresó un username
+      // Intentar iniciar sesión con email o username
       let email = identifier;
-      if (!identifier.includes('@')) {
+      if (!identifier.includes("@")) {
+        // Si el usuario ingresó un username, buscar el email correspondiente
         const { data: profile, error: profileError } = await supabase
-          .from("profiles")
+          .from("Perfil")
           .select("email")
-          .eq("username", identifier)
+          .eq("usuario", identifier)
           .single();
 
         if (profileError || !profile) {
@@ -34,6 +35,7 @@ const Login = () => {
         email = profile.email;
       }
 
+      // Iniciar sesión con el email obtenido
       const { data, error: signInError } = await supabase.auth.signInWithPassword({
         email,
         password,
@@ -46,7 +48,7 @@ const Login = () => {
       }
 
       if (data?.user) {
-        router.push('/dashboard');
+        router.push("/dashboard"); // Redirigir al dashboard después del inicio de sesión
       } else {
         setError("Error al iniciar sesión. Por favor, intenta de nuevo.");
       }

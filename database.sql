@@ -1,11 +1,11 @@
 -- Habilitar la extensión para UUID en PostgreSQL
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
--- Tabla: Perfil (Usa el ID de auth.users como clave primaria y referencia a auth.users)
-CREATE TABLE Perfil (
-    ID_perfil UUID PRIMARY KEY DEFAULT auth.uid() REFERENCES auth.users(id) ON DELETE CASCADE,
+-- Tabla: Perfil (Vinculada directamente a auth.users)
+CREATE TABLE perfil (
+    id_perfil UUID PRIMARY KEY DEFAULT auth.uid() REFERENCES auth.users(id) ON DELETE CASCADE,
     usuario VARCHAR(50) NOT NULL UNIQUE,
-    email VARCHAR(255) NOT NULL UNIQUE REFERENCES auth.users(email) ON DELETE CASCADE,
+    email VARCHAR(255) NOT NULL UNIQUE,
     avatar TEXT,
     descripcion TEXT,
     rol VARCHAR(20) DEFAULT 'usuario' CHECK (rol IN ('admin', 'usuario')),
@@ -107,11 +107,24 @@ CREATE TABLE Inventario_Item (
 );
 
 -- Políticas de seguridad en Supabase
-CREATE POLICY select_perfil_policy ON Perfil
-FOR SELECT USING (true);
+ALTER TABLE perfil ENABLE ROW LEVEL SECURITY;
 
-CREATE POLICY update_perfil_policy ON Perfil
-FOR UPDATE USING (auth.uid() = ID_perfil);
+-- Política para permitir lectura a todos los usuarios autenticados
+CREATE POLICY "Permitir lectura de perfiles"
+    ON perfil FOR SELECT
+    USING (true);
 
-CREATE POLICY delete_perfil_policy ON Perfil
-FOR DELETE USING (auth.uid() = ID_perfil);
+-- Política para permitir actualización solo al propio usuario
+CREATE POLICY "Permitir actualización de perfil propio"
+    ON perfil FOR UPDATE
+    USING (auth.uid() = id_perfil);
+
+-- Política para permitir eliminación solo al propio usuario
+CREATE POLICY "Permitir eliminación de perfil propio"
+    ON perfil FOR DELETE
+    USING (auth.uid() = id_perfil);
+
+-- Política para permitir inserción durante el registro
+CREATE POLICY "Permitir inserción de perfil durante registro"
+    ON perfil FOR INSERT
+    WITH CHECK (true);

@@ -35,33 +35,20 @@ const SignUp = () => {
         return;
       }
 
-      // Verificar si el nombre de usuario ya existe
-      const { data: existingUser } = await supabase
-        .from("profiles")
-        .select("username")
-        .eq("username", username)
-        .maybeSingle();
-
-      if (existingUser) {
-        setError("El nombre de usuario ya está en uso.");
-        return;
-      }
-
       // Registrar al usuario en Supabase Auth
       const { data: authData, error: signUpError } = await supabase.auth.signUp({
         email,
         password,
         options: {
-          emailRedirectTo: `${window.location.origin}/api/auth/callback`,
           data: {
-            username: username
-          }
-        }
+            username: username, // Guardamos el username en los metadatos
+          },
+        },
       });
 
       if (signUpError) {
         console.error("Error de registro:", signUpError);
-        
+
         if (signUpError.message.includes("Email rate limit exceeded")) {
           setError("Has excedido el límite de intentos. Por favor, espera unos minutos.");
         } else if (signUpError.message.includes("User already registered")) {
@@ -73,8 +60,34 @@ const SignUp = () => {
       }
 
       if (authData?.user) {
+        // Crear el perfil en la tabla perfil
+        const { error: profileError } = await supabase
+          .from("perfil")
+          .insert({
+            id_perfil: authData.user.id,
+            usuario: username,
+            email: email,
+            rol: "usuario",
+          });
+
+        if (profileError) {
+          if (profileError.code === "23505") {
+            if (profileError.message.includes("usuario")) {
+              setError("El nombre de usuario ya está en uso.");
+            } else if (profileError.message.includes("email")) {
+              setError("Este email ya está registrado.");
+            } else {
+              setError("Este usuario o email ya está registrado.");
+            }
+          } else {
+            console.error("Error al crear el perfil:", profileError);
+            setError(`Error al crear el perfil: ${profileError.message || "Error desconocido"}`);
+          }
+          return;
+        }
+
         alert("¡Usuario registrado! Por favor, verifica tu correo electrónico para confirmar tu cuenta.");
-        router.push('/login');
+        router.push("/login");
       } else {
         setError("Error al crear el usuario. Por favor, intenta de nuevo.");
       }
@@ -90,21 +103,21 @@ const SignUp = () => {
     <div className="flex items-center justify-center min-h-screen bg-gray-850">
       <div className="bg-gray-800 p-8 rounded shadow-lg w-full max-w-md">
         <h1 className="text-2xl font-bold mb-4 text-center text-gray-100">Regístrate</h1>
-        
+
         <p className="text-center mb-4 text-gray-300">
           ¿Ya tienes una cuenta?{" "}
           <Link href="/login" className="text-blue-500">
             ¡Inicia sesión!
           </Link>
         </p>
-        
+
         {error && (
           <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4">
             <strong className="font-bold">Error: </strong>
             <span className="block sm:inline">{error}</span>
           </div>
         )}
-        
+
         <form onSubmit={handleSignUp} className="space-y-4">
           <div>
             <label className="block mb-2 text-gray-300">Nombre de usuario:</label>
@@ -149,7 +162,7 @@ const SignUp = () => {
               minLength={6}
             />
           </div>
-          <button 
+          <button
             className="w-full bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-500 disabled:opacity-50"
             disabled={loading}
           >
