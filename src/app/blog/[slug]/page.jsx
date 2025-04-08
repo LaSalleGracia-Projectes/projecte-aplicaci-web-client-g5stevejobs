@@ -17,9 +17,9 @@ const blogData = {
       una variedad de opciones útiles. Entre las características principales del menú de pausa se 
       incluyen:
 
-      - **Reanudar juego**: Permite a los jugadores continuar desde donde dejaron.
-      - **Reiniciar sala**: Para reiniciar el nivel.
-      - **Salir**: Para salir del juego.
+      - Reanudar juego: Permite a los jugadores continuar desde donde dejaron.
+      - Reiniciar sala: Para reiniciar el nivel.
+      - Salir: Para salir del juego.
 
       Fan e Iván han puesto un gran esfuerzo en asegurarse de que el menú de pausa sea intuitivo 
       y fácil de usar. Han realizado múltiples pruebas y ajustes para garantizar que funcione sin 

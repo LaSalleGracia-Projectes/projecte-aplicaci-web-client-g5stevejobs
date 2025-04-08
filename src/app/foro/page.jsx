@@ -109,7 +109,7 @@ const ForoPage = () => {
               onClick={() => router.push("/foro/create")}
               className="flex items-center px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 focus:ring focus:ring-green-300"
             >
-              Crear Tema
+              Crear hilo
             </button>
           )}
         </div>
