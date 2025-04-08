@@ -69,6 +69,15 @@ const MyProfilePage = () => {
         <h1 className="text-2xl font-bold text-gray-100 mb-4">
           Mi Perfil
         </h1>
+        {profile.avatar && (
+          <div className="flex justify-center mb-6">
+            <img
+              src={profile.avatar}
+              alt="Avatar"
+              className="w-32 h-32 rounded-full object-cover border-2 border-gray-700"
+            />
+          </div>
+        )}
         <div className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-gray-300">
@@ -96,6 +105,14 @@ const MyProfilePage = () => {
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-300">
+              Descripción
+            </label>
+            <div className="mt-1 p-2 bg-gray-700 rounded text-gray-100">
+              {profile.descripcion || "Sin descripción"}
+            </div>
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-300">
               Fecha de Registro
             </label>
             <div className="mt-1 p-2 bg-gray-700 rounded text-gray-100">
@@ -113,10 +130,10 @@ const MyProfilePage = () => {
         </div>
         <div className="mt-6">
           <button
-            onClick={() => router.push("/")}
+            onClick={() => router.push(`/perfil/${profile.usuario}/editar`)}
             className="w-full bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-500"
           >
-            Volver al Inicio
+            Editar Perfil
           </button>
         </div>
       </div>
