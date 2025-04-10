@@ -15,9 +15,9 @@ export const AuthProvider = ({ children }) => {
       if (session?.user) {
         setUser(session.user);
         const { data: profile, error } = await supabase
-          .from("Perfil")
+          .from("perfil")
           .select("*")
-          .eq("ID_perfil", session.user.id)
+          .eq("id_perfil", session.user.id)
           .single();
 
         if (!error) {
@@ -32,9 +32,9 @@ export const AuthProvider = ({ children }) => {
       if (session?.user) {
         setUser(session.user);
         supabase
-          .from("Perfil")
+          .from("perfil")
           .select("*")
-          .eq("ID_perfil", session.user.id)
+          .eq("id_perfil", session.user.id)
           .single()
           .then(({ data, error }) => {
             if (!error) {
