@@ -1,147 +1,165 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
-import { useAuth } from "../../../context/AuthContext";
+import { useState } from "react";
 import { supabase } from "../../../supabaseClient";
+import { useRouter } from "next/navigation";
 
-const CreateTopicPage = () => {
-  const { user } = useAuth();
+export default function CreatePost() {
   const router = useRouter();
-  const [titulo, setTitulo] = useState("");
-  const [topico, setTopico] = useState("Offtopic");
-  const [contenido, setContenido] = useState("");
+  const [title, setTitle] = useState("");
+  const [content, setContent] = useState("");
+  const [topic, setTopic] = useState("");
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [usuario, setUsuario] = useState("");
-  const topics = ["Offtopic", "Bugs", "Anuncios", "Feedback"];
 
-  useEffect(() => {
-    const fetchUsuario = async () => {
-      if (user) {
-        const { data, error } = await supabase
-          .from("perfil")
-          .select("usuario")
-          .eq("id_perfil", user.id)
-          .single();
-
-        if (error) {
-          console.error("Error fetching usuario:", error);
-        } else {
-          setUsuario(data.usuario);
-        }
-      }
-    };
-
-    fetchUsuario();
-  }, [user]);
+  const topics = [
+    "General",
+    "Bugs",
+    "Sugerencias",
+    "Ayuda",
+    "Guías",
+    "Discusión"
+  ];
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!titulo || !contenido) {
-      setError("El título y el contenido son obligatorios.");
-      return;
-    }
-
-    if (!usuario) {
-      setError("El nombre de usuario es obligatorio.");
-      return;
-    }
-
-    const currentDate = new Date();
-
-    const newThread = {
-      titulo,
-      topico,
-      usuario,
-      contenido,
-      fecha_publicacion: currentDate,
-      ultima_publicacion: currentDate,
-      estatus: true, // Cambiado a true
-    };
-
-    console.log("Data to be sent:", newThread);
+    setLoading(true);
+    setError(null);
 
     try {
-      const { data, error } = await supabase
-        .from("publicacion")
-        .insert([newThread]);
-
-      if (error) {
-        console.error("Error creando el hilo:", error);
-        console.error("Detalles del error:", error.details);
-        console.error("Pista del error:", error.hint);
-        if (error.status === 400) {
-          setError("Solicitud incorrecta. Por favor, revisa tu entrada.");
-        } else {
-          setError(error.message || "Ocurrió un error desconocido");
-        }
-      } else {
-        router.push("/foro");
+      // Obtener el usuario actual
+      const { data: { user }, error: userError } = await supabase.auth.getUser();
+      if (userError) throw userError;
+      if (!user) {
+        router.push('/login');
+        return;
       }
+
+      const now = new Date().toISOString();
+
+      // Crear la publicación
+      const { data, error: postError } = await supabase
+        .from('publicacion')
+        .insert([
+          {
+            titulo: title,
+            contenido: content,
+            topico: topic,
+            id_perfil: user.id,
+            estatus: true,
+            fecha_publicacion: now,
+            ultima_publicacion: now
+          }
+        ])
+        .select(`
+          *,
+          perfil:perfil!publicacion_id_perfil_fkey (
+            usuario,
+            avatar
+          )
+        `)
+        .single();
+
+      if (postError) {
+        console.error('Error al crear la publicación:', postError);
+        throw postError;
+      }
+
+      // Redirigir a la página de la publicación
+      router.push(`/foro/${data.id_publicacion}`);
     } catch (err) {
-      console.error("Error inesperado:", err);
-      setError(err.message || "Ocurrió un error inesperado");
+      console.error('Error:', err);
+      setError(err.message || 'Error al crear la publicación. Por favor, intenta de nuevo.');
+    } finally {
+      setLoading(false);
     }
   };
 
-  if (!user) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <p className="text-gray-600">Debes estar registrado para crear un hilo.</p>
-      </div>
-    );
-  }
-
   return (
-    <div className="bg-gray-850 min-h-screen text-white">
-      <main className="container mx-auto px-6 py-8">
-        <h1 className="text-3xl font-bold mb-6">Crear un nuevo hilo</h1>
-        <form onSubmit={handleSubmit} className="space-y-6">
-          {error && <p className="text-red-500">{error}</p>}
-          <div>
-            <label className="block text-sm font-medium text-gray-300">Título</label>
-            <input
-              type="text"
-              value={titulo}
-              onChange={(e) => setTitulo(e.target.value)}
-              className="w-full px-4 py-2 border rounded-lg focus:ring focus:ring-blue-300 focus:outline-none text-black"
-              required
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-300">Tema</label>
-            <select
-              value={topico}
-              onChange={(e) => setTopico(e.target.value)}
-              className="w-full px-4 py-2 border rounded-lg focus:ring focus:ring-blue-300 focus:outline-none text-black"
-            >
-              {topics.map((topic) => (
-                <option key={topic} value={topic} className="text-black">
-                  {topic}
-                </option>
-              ))}
-            </select>
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-300">Contenido</label>
-            <textarea
-              value={contenido}
-              onChange={(e) => setContenido(e.target.value)}
-              className="w-full px-4 py-2 border rounded-lg focus:ring focus:ring-blue-300 focus:outline-none text-black"
-              rows="6"
-              required
-            />
-          </div>
-          <button
-            type="submit"
-            className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:ring focus:ring-blue-300"
-          >
-            Crear hilo
-          </button>
-        </form>
-      </main>
+    <div className="min-h-screen bg-gray-850 p-4">
+      <div className="max-w-4xl mx-auto">
+        <div className="bg-gray-800 rounded-lg p-6 shadow-lg">
+          <h1 className="text-2xl font-bold text-white mb-6">Crear Nueva Publicación</h1>
+
+          {error && (
+            <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4">
+              <strong className="font-bold">Error: </strong>
+              <span className="block sm:inline">{error}</span>
+            </div>
+          )}
+
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <div>
+              <label htmlFor="title" className="block text-sm font-medium text-gray-300">
+                Título
+              </label>
+              <input
+                type="text"
+                id="title"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                required
+                minLength={3}
+                maxLength={100}
+                className="mt-1 block w-full rounded-md bg-gray-700 border-gray-600 text-white shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50"
+                placeholder="Escribe un título descriptivo"
+              />
+            </div>
+
+            <div>
+              <label htmlFor="topic" className="block text-sm font-medium text-gray-300">
+                Tópico
+              </label>
+              <select
+                id="topic"
+                value={topic}
+                onChange={(e) => setTopic(e.target.value)}
+                required
+                className="mt-1 block w-full rounded-md bg-gray-700 border-gray-600 text-white shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50"
+              >
+                <option value="">Selecciona un tópico</option>
+                {topics.map((t) => (
+                  <option key={t} value={t}>
+                    {t}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div>
+              <label htmlFor="content" className="block text-sm font-medium text-gray-300">
+                Contenido
+              </label>
+              <textarea
+                id="content"
+                value={content}
+                onChange={(e) => setContent(e.target.value)}
+                required
+                rows={10}
+                className="mt-1 block w-full rounded-md bg-gray-700 border-gray-600 text-white shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50"
+                placeholder="Escribe el contenido de tu publicación"
+              />
+            </div>
+
+            <div className="flex justify-end space-x-4">
+              <button
+                type="button"
+                onClick={() => router.back()}
+                className="px-4 py-2 border border-gray-600 text-gray-300 rounded hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50 transition-colors"
+              >
+                Cancelar
+              </button>
+              <button
+                type="submit"
+                disabled={loading}
+                className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {loading ? "Creando..." : "Crear Publicación"}
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
     </div>
   );
-};
-
-export default CreateTopicPage;
+}
