@@ -21,10 +21,18 @@ export default function AdminPanel() {
     usuario: '',
     email: '',
     rol: '',
-    estatus: true
+    descripcion: '',
+    avatar: ''
   });
   const [accessDenied, setAccessDenied] = useState(false);
   const [activeSection, setActiveSection] = useState('users'); // 'users' or 'forum'
+  const [banModalOpen, setBanModalOpen] = useState(false);
+  const [banForm, setBanForm] = useState({
+    duration: 1, // días
+    reason: ''
+  });
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [deleteReason, setDeleteReason] = useState('');
 
   useEffect(() => {
     console.log('AdminPanel - Auth state:', { user, perfil, authLoading });
@@ -173,10 +181,11 @@ export default function AdminPanel() {
   const handleEdit = (user) => {
     setSelectedUser(user);
     setEditForm({
-      usuario: user.usuario,
-      email: user.email,
-      rol: user.rol,
-      estatus: user.estatus
+      usuario: user.usuario || '',
+      email: user.email || '',
+      rol: user.rol || 'usuario',
+      descripcion: user.descripcion || '',
+      avatar: user.avatar || ''
     });
     setIsEditing(true);
   };
@@ -190,7 +199,8 @@ export default function AdminPanel() {
           usuario: editForm.usuario,
           email: editForm.email,
           rol: editForm.rol,
-          estatus: editForm.estatus
+          descripcion: editForm.descripcion,
+          avatar: editForm.avatar
         })
         .eq('id_perfil', selectedUser.id_perfil);
 
@@ -202,50 +212,152 @@ export default function AdminPanel() {
           : user
       ));
       setIsEditing(false);
+      setError(null);
     } catch (error) {
       console.error('Error updating user:', error);
-      setError('Error al actualizar el usuario');
+      setError('Error al actualizar el usuario: ' + error.message);
     }
   };
 
-  const handleDelete = async (userId) => {
-    if (!window.confirm('¿Estás seguro de que quieres eliminar este usuario?')) {
-      return;
-    }
+  const handleDeleteAvatar = () => {
+    setEditForm({ ...editForm, avatar: null });
+  };
 
+  const openBanModal = (user) => {
+    setSelectedUser(user);
+    setBanForm({
+      duration: 1,
+      reason: ''
+    });
+    setBanModalOpen(true);
+  };
+
+  const handleBan = async () => {
+    if (!selectedUser) return;
+    
     try {
+      // Calcular la fecha de expiración del ban
+      const banExpirationDate = new Date();
+      banExpirationDate.setDate(banExpirationDate.getDate() + banForm.duration);
+      
+      // Guardar la información del ban en la base de datos
       const { error } = await supabase
         .from('perfil')
-        .delete()
-        .eq('id_perfil', userId);
+        .update({
+          ban_expiration: banExpirationDate.toISOString(),
+          ban_reason: banForm.reason
+        })
+        .eq('id_perfil', selectedUser.id_perfil);
 
       if (error) throw error;
       
-      setUsers(users.filter(user => user.id_perfil !== userId));
+      // Actualizar la lista de usuarios
+      setUsers(users.map(user => 
+        user.id_perfil === selectedUser.id_perfil 
+          ? { 
+              ...user, 
+              ban_expiration: banExpirationDate.toISOString(),
+              ban_reason: banForm.reason
+            }
+          : user
+      ));
+      
+      setBanModalOpen(false);
+      setError(null);
     } catch (error) {
-      console.error('Error deleting user:', error);
-      setError('Error al eliminar el usuario');
+      console.error('Error banning user:', error);
+      setError('Error al banear al usuario: ' + error.message);
     }
   };
 
-  const handleBan = async (userId, currentStatus) => {
+  const handleUnban = async (userId) => {
     try {
       const { error } = await supabase
         .from('perfil')
-        .update({ estatus: !currentStatus })
+        .update({
+          ban_expiration: null,
+          ban_reason: null
+        })
         .eq('id_perfil', userId);
 
       if (error) throw error;
       
       setUsers(users.map(user => 
         user.id_perfil === userId 
-          ? { ...user, estatus: !currentStatus }
+          ? { 
+              ...user, 
+              ban_expiration: null,
+              ban_reason: null
+            }
           : user
       ));
+      
+      setError(null);
     } catch (error) {
-      console.error('Error updating user status:', error);
-      setError('Error al actualizar el estado del usuario');
+      console.error('Error unbanning user:', error);
+      setError('Error al desbanear al usuario: ' + error.message);
     }
+  };
+
+  const openDeleteModal = (user) => {
+    setSelectedUser(user);
+    setDeleteReason('');
+    setDeleteModalOpen(true);
+  };
+
+  const handleDelete = async () => {
+    if (!selectedUser) return;
+    
+    try {
+      // Primero, registrar la razón de eliminación si se proporcionó
+      if (deleteReason) {
+        const { error: logError } = await supabase
+          .from('perfil')
+          .update({
+            delete_reason: deleteReason,
+            deleted_at: new Date().toISOString()
+          })
+          .eq('id_perfil', selectedUser.id_perfil);
+          
+        if (logError) throw logError;
+      }
+      
+      // Luego, eliminar el usuario
+      const { error } = await supabase
+        .from('perfil')
+        .delete()
+        .eq('id_perfil', selectedUser.id_perfil);
+
+      if (error) throw error;
+      
+      setUsers(users.filter(user => user.id_perfil !== selectedUser.id_perfil));
+      setDeleteModalOpen(false);
+      setError(null);
+    } catch (error) {
+      console.error('Error deleting user:', error);
+      setError('Error al eliminar al usuario: ' + error.message);
+    }
+  };
+
+  const isUserBanned = (user) => {
+    if (!user.ban_expiration) return false;
+    
+    const expirationDate = new Date(user.ban_expiration);
+    return expirationDate > new Date();
+  };
+
+  const getBanTimeRemaining = (user) => {
+    if (!user.ban_expiration) return null;
+    
+    const expirationDate = new Date(user.ban_expiration);
+    const now = new Date();
+    
+    if (expirationDate <= now) return null;
+    
+    const diffTime = expirationDate - now;
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    
+    return diffDays;
   };
 
   if (authLoading || loading) {
@@ -374,16 +486,48 @@ export default function AdminPanel() {
                       <option value="admin">Administrador</option>
                     </select>
                   </div>
-                  <div className="flex items-center">
-                    <input
-                      type="checkbox"
-                      checked={editForm.estatus}
-                      onChange={(e) => setEditForm({ ...editForm, estatus: e.target.checked })}
-                      className="rounded bg-gray-700 border-gray-600 text-blue-600"
-                    />
-                    <label className="ml-2 text-sm text-gray-300">
-                      Usuario activo
+                  <div>
+                    <label className="block text-sm font-medium text-gray-300">
+                      Descripción
                     </label>
+                    <textarea
+                      value={editForm.descripcion}
+                      onChange={(e) => setEditForm({ ...editForm, descripcion: e.target.value })}
+                      className="mt-1 block w-full rounded-md bg-gray-700 border-gray-600 text-white"
+                      rows="3"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-300">
+                      URL del Avatar
+                    </label>
+                    <div className="flex">
+                      <input
+                        type="text"
+                        value={editForm.avatar || ''}
+                        onChange={(e) => setEditForm({ ...editForm, avatar: e.target.value })}
+                        className="mt-1 block w-full rounded-md bg-gray-700 border-gray-600 text-white"
+                      />
+                      <button
+                        type="button"
+                        onClick={handleDeleteAvatar}
+                        className="ml-2 px-3 py-1 bg-red-600 text-white rounded hover:bg-red-500"
+                      >
+                        Eliminar
+                      </button>
+                    </div>
+                    {editForm.avatar && (
+                      <div className="mt-2">
+                        <img 
+                          src={editForm.avatar} 
+                          alt="Avatar preview" 
+                          className="h-16 w-16 rounded-full object-cover"
+                          onError={(e) => {
+                            e.target.src = 'https://via.placeholder.com/64?text=Error';
+                          }}
+                        />
+                      </div>
+                    )}
                   </div>
                   <div className="flex justify-end space-x-3">
                     <button
@@ -417,9 +561,6 @@ export default function AdminPanel() {
                         Rol
                       </th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
-                        Estado
-                      </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
                         Acciones
                       </th>
                     </tr>
@@ -428,20 +569,29 @@ export default function AdminPanel() {
                     {users.map((user) => (
                       <tr key={user.id_perfil}>
                         <td className="px-6 py-4 whitespace-nowrap text-gray-300">
-                          {user.usuario}
+                          <div className="flex items-center">
+                            {user.avatar ? (
+                              <img 
+                                src={user.avatar} 
+                                alt={user.usuario} 
+                                className="h-8 w-8 rounded-full mr-2"
+                                onError={(e) => {
+                                  e.target.src = 'https://via.placeholder.com/32?text=Error';
+                                }}
+                              />
+                            ) : (
+                              <div className="h-8 w-8 rounded-full bg-gray-600 mr-2 flex items-center justify-center">
+                                <span className="text-xs text-white">{user.usuario.charAt(0).toUpperCase()}</span>
+                              </div>
+                            )}
+                            {user.usuario}
+                          </div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-gray-300">
                           {user.email}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-gray-300 capitalize">
                           {user.rol}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                            user.estatus ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
-                          }`}>
-                            {user.estatus ? 'Activo' : 'Inactivo'}
-                          </span>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
                           <button
@@ -450,16 +600,23 @@ export default function AdminPanel() {
                           >
                             Editar
                           </button>
+                          {isUserBanned(user) ? (
+                            <button
+                              onClick={() => handleUnban(user.id_perfil)}
+                              className="text-green-400 hover:text-green-300"
+                            >
+                              Desbanear
+                            </button>
+                          ) : (
+                            <button
+                              onClick={() => openBanModal(user)}
+                              className="text-yellow-400 hover:text-yellow-300"
+                            >
+                              Banear
+                            </button>
+                          )}
                           <button
-                            onClick={() => handleBan(user.id_perfil, user.estatus)}
-                            className={`${
-                              user.estatus ? 'text-yellow-400 hover:text-yellow-300' : 'text-green-400 hover:text-green-300'
-                            }`}
-                          >
-                            {user.estatus ? 'Banear' : 'Desbanear'}
-                          </button>
-                          <button
-                            onClick={() => handleDelete(user.id_perfil)}
+                            onClick={() => openDeleteModal(user)}
                             className="text-red-400 hover:text-red-300"
                           >
                             Eliminar
@@ -556,6 +713,100 @@ export default function AdminPanel() {
           </div>
         )}
       </div>
+
+      {/* Modal de Ban */}
+      {banModalOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-gray-800 p-6 rounded-lg shadow-lg max-w-md w-full">
+            <h2 className="text-xl font-bold text-white mb-4">Banear Usuario</h2>
+            <p className="text-gray-300 mb-4">
+              Estás a punto de banear a <span className="font-bold">{selectedUser?.usuario}</span>.
+              Selecciona la duración y proporciona una razón.
+            </p>
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-300">
+                  Duración (días)
+                </label>
+                <input
+                  type="number"
+                  min="1"
+                  value={banForm.duration}
+                  onChange={(e) => setBanForm({ ...banForm, duration: parseInt(e.target.value) })}
+                  className="mt-1 block w-full rounded-md bg-gray-700 border-gray-600 text-white"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-300">
+                  Razón
+                </label>
+                <textarea
+                  value={banForm.reason}
+                  onChange={(e) => setBanForm({ ...banForm, reason: e.target.value })}
+                  className="mt-1 block w-full rounded-md bg-gray-700 border-gray-600 text-white"
+                  rows="3"
+                  placeholder="Razón del ban..."
+                />
+              </div>
+              <div className="flex justify-end space-x-3">
+                <button
+                  onClick={() => setBanModalOpen(false)}
+                  className="px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-500"
+                >
+                  Cancelar
+                </button>
+                <button
+                  onClick={handleBan}
+                  className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-500"
+                >
+                  Banear
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal de Eliminación */}
+      {deleteModalOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-gray-800 p-6 rounded-lg shadow-lg max-w-md w-full">
+            <h2 className="text-xl font-bold text-white mb-4">Eliminar Usuario</h2>
+            <p className="text-gray-300 mb-4">
+              Estás a punto de eliminar a <span className="font-bold">{selectedUser?.usuario}</span>.
+              Esta acción no se puede deshacer.
+            </p>
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-300">
+                  Razón (opcional)
+                </label>
+                <textarea
+                  value={deleteReason}
+                  onChange={(e) => setDeleteReason(e.target.value)}
+                  className="mt-1 block w-full rounded-md bg-gray-700 border-gray-600 text-white"
+                  rows="3"
+                  placeholder="Razón de la eliminación..."
+                />
+              </div>
+              <div className="flex justify-end space-x-3">
+                <button
+                  onClick={() => setDeleteModalOpen(false)}
+                  className="px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-500"
+                >
+                  Cancelar
+                </button>
+                <button
+                  onClick={handleDelete}
+                  className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-500"
+                >
+                  Eliminar
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 } 
