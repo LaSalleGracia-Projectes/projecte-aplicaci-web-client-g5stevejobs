@@ -5,6 +5,7 @@ import { supabase } from "../../../supabaseClient";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useAuth } from "../../../context/AuthContext";
+import { toast } from "react-hot-toast";
 
 export default function PostDetailClient({ slug }) {
   const router = useRouter();
@@ -15,6 +16,9 @@ export default function PostDetailClient({ slug }) {
   const [commenting, setCommenting] = useState(false);
   const [error, setError] = useState(null);
   const { user } = useAuth();
+  const [showDeletePostModal, setShowDeletePostModal] = useState(false);
+  const [commentToDelete, setCommentToDelete] = useState(null);
+  const [showDeleteCommentModal, setShowDeleteCommentModal] = useState(false);
 
   useEffect(() => {
     if (!slug) {
@@ -123,6 +127,54 @@ export default function PostDetailClient({ slug }) {
     });
   };
 
+  const handleDeletePost = async () => {
+    try {
+      // Primero eliminamos todos los comentarios asociados
+      const { error: commentsError } = await supabase
+        .from('comentario')
+        .delete()
+        .eq('id_publicacion', post.id_publicacion);
+
+      if (commentsError) throw commentsError;
+
+      // Luego eliminamos la publicación
+      const { error: postError } = await supabase
+        .from('publicacion')
+        .delete()
+        .eq('id_publicacion', post.id_publicacion);
+
+      if (postError) throw postError;
+
+      toast.success('Post eliminado correctamente');
+      router.push('/foro');
+    } catch (error) {
+      console.error('Error al eliminar el post:', error);
+      toast.error('Error al eliminar el post');
+    }
+    setShowDeletePostModal(false);
+  };
+
+  const handleDeleteComment = async () => {
+    if (!commentToDelete) return;
+
+    try {
+      const { error } = await supabase
+        .from('comentario')
+        .delete()
+        .eq('id_comentario', commentToDelete.id_comentario);
+
+      if (error) throw error;
+
+      setComments(comments.filter(c => c.id_comentario !== commentToDelete.id_comentario));
+      toast.success('Comentario eliminado correctamente');
+    } catch (error) {
+      console.error('Error al eliminar el comentario:', error);
+      toast.error('Error al eliminar el comentario');
+    }
+    setShowDeleteCommentModal(false);
+    setCommentToDelete(null);
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-850 p-4">
@@ -177,20 +229,24 @@ export default function PostDetailClient({ slug }) {
               />
             )}
             <div className="flex-1">
-              <h1 className="text-2xl font-bold text-white mb-2">{post.titulo}</h1>
-              <div className="flex items-center space-x-4 text-sm text-gray-400 mb-4">
-                <Link href={`/perfil/${post.perfil.usuario}`} className="hover:text-blue-400">
-                  {post.perfil.usuario}
-                </Link>
-                <span>•</span>
-                <span>{formatDate(post.fecha_publicacion)}</span>
-                {post.topico && (
-                  <>
+              <div className="flex justify-between items-start mb-4">
+                <div>
+                  <h1 className="text-2xl font-bold text-white mb-2">{post.titulo}</h1>
+                  <div className="flex items-center space-x-4 text-sm text-gray-400">
+                    <Link href={`/perfil/${post.perfil.usuario}`} className="hover:text-blue-400">
+                      {post.perfil.usuario}
+                    </Link>
                     <span>•</span>
-                    <span className="bg-blue-600 text-white px-2 py-1 rounded-full text-xs">
-                      {post.topico}
-                    </span>
-                  </>
+                    <span>{formatDate(post.fecha_publicacion)}</span>
+                  </div>
+                </div>
+                {(user?.role?.toLowerCase() === 'admin' || user?.id === post.id_perfil) && (
+                  <button
+                    onClick={() => setShowDeletePostModal(true)}
+                    className="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700 transition-colors"
+                  >
+                    Eliminar Post
+                  </button>
                 )}
               </div>
               <div className="text-gray-300 whitespace-pre-wrap">{post.contenido}</div>
@@ -260,6 +316,17 @@ export default function PostDetailClient({ slug }) {
                     <div className="text-gray-300 whitespace-pre-wrap">
                       {comment.contenido}
                     </div>
+                    {(user?.role?.toLowerCase() === 'admin' || user?.id === comment.id_perfil) && (
+                      <button
+                        onClick={() => {
+                          setCommentToDelete(comment);
+                          setShowDeleteCommentModal(true);
+                        }}
+                        className="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700 transition-colors ml-4"
+                      >
+                        Eliminar
+                      </button>
+                    )}
                   </div>
                 </div>
               </div>
@@ -267,6 +334,57 @@ export default function PostDetailClient({ slug }) {
           </div>
         </div>
       </div>
+
+      {/* Modal de confirmación para eliminar post */}
+      {showDeletePostModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="bg-gray-800 rounded-lg p-6 max-w-md w-full">
+            <h3 className="text-xl font-semibold text-white mb-4">Confirmar eliminación</h3>
+            <p className="text-gray-300 mb-6">¿Estás seguro de que deseas eliminar este post? Esta acción eliminará también todos los comentarios asociados y no se puede deshacer.</p>
+            <div className="flex justify-end space-x-4">
+              <button
+                onClick={() => setShowDeletePostModal(false)}
+                className="px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700"
+              >
+                Cancelar
+              </button>
+              <button
+                onClick={handleDeletePost}
+                className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
+              >
+                Eliminar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal de confirmación para eliminar comentario */}
+      {showDeleteCommentModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="bg-gray-800 rounded-lg p-6 max-w-md w-full">
+            <h3 className="text-xl font-semibold text-white mb-4">Confirmar eliminación</h3>
+            <p className="text-gray-300 mb-6">¿Estás seguro de que deseas eliminar este comentario? Esta acción no se puede deshacer.</p>
+            <div className="flex justify-end space-x-4">
+              <button
+                onClick={() => {
+                  setShowDeleteCommentModal(false);
+                  setCommentToDelete(null);
+                }}
+                className="px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700"
+              >
+                Cancelar
+              </button>
+              <button
+                onClick={handleDeleteComment}
+                className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
+              >
+                Eliminar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 } 
