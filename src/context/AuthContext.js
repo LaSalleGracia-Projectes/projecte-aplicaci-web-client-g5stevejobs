@@ -2,86 +2,197 @@
 
 import { createContext, useContext, useEffect, useState } from 'react';
 import { supabase } from '../supabaseClient';
+import { useRouter } from 'next/navigation';
 
-const AuthContext = createContext();
+const AuthContext = createContext({});
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [perfil, setPerfil] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [isBanned, setIsBanned] = useState(false);
+  const [banReason, setBanReason] = useState('');
+  const [banExpiration, setBanExpiration] = useState(null);
+  const router = useRouter();
+
+  // Función para verificar si un usuario está baneado
+  const checkIfUserIsBanned = (profile) => {
+    if (!profile || !profile.ban_expiration) return false;
+    
+    const expirationDate = new Date(profile.ban_expiration);
+    const now = new Date();
+    const isBanned = expirationDate > now;
+    
+    if (isBanned) {
+      const timeLeft = Math.ceil((expirationDate - now) / (1000 * 60 * 60 * 24));
+      console.log('Usuario baneado detectado en AuthContext:', {
+        userId: profile.id_perfil,
+        banReason: profile.ban_reason,
+        banExpiration: profile.ban_expiration,
+        timeLeft: `${timeLeft} días`
+      });
+      
+      setIsBanned(true);
+      setBanReason(profile.ban_reason || 'No se proporcionó razón');
+      setBanExpiration(profile.ban_expiration);
+      
+      return {
+        isBanned: true,
+        reason: profile.ban_reason || 'No se proporcionó razón',
+        expiration: profile.ban_expiration,
+        timeLeft: timeLeft
+      };
+    }
+    
+    setIsBanned(false);
+    setBanReason('');
+    setBanExpiration(null);
+    return false;
+  };
+
+  // Función para obtener el perfil del usuario
+  const fetchUserProfile = async (userId) => {
+    try {
+      const { data: userProfile, error } = await supabase
+        .from('perfil')
+        .select('*')
+        .eq('id_perfil', userId)
+        .single();
+
+      if (error) throw error;
+
+      console.log('Perfil obtenido:', userProfile);
+      setPerfil(userProfile);
+      return userProfile;
+    } catch (error) {
+      console.error('Error al obtener perfil:', error);
+      return null;
+    }
+  };
 
   useEffect(() => {
-    const fetchSession = async () => {
-      console.log('Fetching session...');
-      const { data: { session } } = await supabase.auth.getSession();
-      console.log('Session data:', session);
+    let mounted = true;
 
-      if (session?.user) {
-        console.log('User found in session:', session.user);
-        setUser(session.user);
+    // Obtener la sesión inicial
+    const getInitialSession = async () => {
+      try {
+        const { data: { session }, error } = await supabase.auth.getSession();
         
-        console.log('Fetching profile for user:', session.user.id);
-        const { data: profile, error } = await supabase
-          .from("perfil")
-          .select("*")
-          .eq("id_perfil", session.user.id)
-          .single();
+        if (error) throw error;
 
-        console.log('Profile fetch result:', { profile, error });
+        console.log('Sesión inicial:', {
+          tieneSession: !!session,
+          userId: session?.user?.id
+        });
 
-        if (!error) {
-          console.log('Setting profile:', profile);
-          setPerfil(profile);
-        } else {
-          console.error('Error fetching profile:', error);
+        if (mounted) {
+          if (session?.user) {
+            setUser(session.user);
+            const userProfile = await fetchUserProfile(session.user.id);
+            if (userProfile) {
+              const banStatus = checkIfUserIsBanned(userProfile);
+              if (banStatus?.isBanned) {
+                await supabase.auth.signOut();
+                setUser(null);
+                setPerfil(null);
+                router.push('/login');
+                return;
+              }
+            }
+          } else {
+            setUser(null);
+            setPerfil(null);
+          }
         }
-      } else {
-        console.log('No session found');
+      } catch (error) {
+        console.error('Error al obtener la sesión inicial:', error);
+      } finally {
+        if (mounted) setLoading(false);
       }
-      setLoading(false);
     };
 
-    fetchSession();
+    getInitialSession();
 
-    const { data: subscription } = supabase.auth.onAuthStateChange((event, session) => {
-      console.log('Auth state changed:', event, session);
-      
-      if (session?.user) {
-        console.log('Setting user from auth state change:', session.user);
-        setUser(session.user);
-        
-        console.log('Fetching profile after auth state change');
-        supabase
-          .from("perfil")
-          .select("*")
-          .eq("id_perfil", session.user.id)
-          .single()
-          .then(({ data, error }) => {
-            console.log('Profile fetch after auth change:', { data, error });
-            if (!error) {
-              console.log('Setting profile after auth change:', data);
-              setPerfil(data);
-            } else {
-              console.error('Error fetching profile after auth change:', error);
+    // Escuchar cambios en la autenticación
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+      console.log('Cambio en el estado de autenticación:', {
+        event,
+        userId: session?.user?.id
+      });
+
+      if (mounted) {
+        if (session?.user) {
+          setUser(session.user);
+          const userProfile = await fetchUserProfile(session.user.id);
+          if (userProfile) {
+            const banStatus = checkIfUserIsBanned(userProfile);
+            if (banStatus?.isBanned) {
+              await supabase.auth.signOut();
+              setUser(null);
+              setPerfil(null);
+              router.push('/login');
+              return;
             }
-          });
-      } else {
-        console.log('Clearing user and profile');
-        setUser(null);
-        setPerfil(null);
+          }
+        } else {
+          setUser(null);
+          setPerfil(null);
+          setIsBanned(false);
+          setBanReason('');
+          setBanExpiration(null);
+        }
+
+        setLoading(false);
+
+        if (event === 'SIGNED_OUT') {
+          router.push('/login');
+        } else if (event === 'SIGNED_IN') {
+          const returnUrl = sessionStorage.getItem('returnUrl');
+          if (returnUrl) {
+            sessionStorage.removeItem('returnUrl');
+            router.push(returnUrl);
+          } else {
+            router.push('/');
+          }
+        }
       }
     });
 
     return () => {
+      mounted = false;
       subscription?.unsubscribe();
     };
-  }, []);
+  }, [router]);
 
   return (
-    <AuthContext.Provider value={{ user, perfil, loading }}>
+    <AuthContext.Provider 
+      value={{
+        user,
+        perfil,
+        loading,
+        isBanned,
+        banReason,
+        banExpiration,
+        getBanTimeLeft: () => {
+          if (!banExpiration) return null;
+          const expirationDate = new Date(banExpiration);
+          const now = new Date();
+          if (expirationDate <= now) return null;
+          const diff = expirationDate - now;
+          return {
+            days: Math.floor(diff / (1000 * 60 * 60 * 24)),
+            hours: Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)),
+            minutes: Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60)),
+            total: diff
+          };
+        }
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );
 };
 
-export const useAuth = () => useContext(AuthContext);
+export const useAuth = () => {
+  return useContext(AuthContext);
+};

@@ -308,34 +308,45 @@ export default function AdminPanel() {
   const handleDelete = async () => {
     if (!selectedUser) return;
     
+    // Evitar eliminar la propia cuenta
+    if (selectedUser.id_perfil === user.id) {
+      setError('No puedes eliminar tu propia cuenta de administrador');
+      setDeleteModalOpen(false);
+      return;
+    }
+
     try {
-      // Primero, registrar la razón de eliminación si se proporcionó
-      if (deleteReason) {
-        const { error: logError } = await supabase
-          .from('perfil')
-          .update({
-            delete_reason: deleteReason,
-            deleted_at: new Date().toISOString()
-          })
-          .eq('id_perfil', selectedUser.id_perfil);
-          
-        if (logError) throw logError;
+      // Primero eliminar el usuario de auth usando la API REST de Supabase
+      const response = await fetch(`${process.env.NEXT_PUBLIC_SUPABASE_URL}/rest/v1/rpc/delete_user`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'apikey': process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+          'Authorization': `Bearer ${process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY}`
+        },
+        body: JSON.stringify({
+          user_id: selectedUser.id_perfil
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error('Error al eliminar el usuario de auth');
       }
-      
-      // Luego, eliminar el usuario
-      const { error } = await supabase
+
+      // Luego eliminar el perfil
+      const { error: profileError } = await supabase
         .from('perfil')
         .delete()
         .eq('id_perfil', selectedUser.id_perfil);
 
-      if (error) throw error;
+      if (profileError) throw profileError;
       
       setUsers(users.filter(user => user.id_perfil !== selectedUser.id_perfil));
       setDeleteModalOpen(false);
       setError(null);
     } catch (error) {
       console.error('Error deleting user:', error);
-      setError('Error al eliminar al usuario: ' + error.message);
+      setError('No se pudo eliminar el usuario. Por favor, inténtalo de nuevo más tarde.');
     }
   };
 

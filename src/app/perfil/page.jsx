@@ -3,9 +3,12 @@
 import React, { useEffect, useState } from "react";
 import { supabase } from "../../supabaseClient";
 import { useRouter } from "next/navigation";
+import { useAuth } from "../../context/AuthContext";
+import ProtectedRoute from "../../components/ProtectedRoute";
 
-const MyProfilePage = () => {
+const ProfileContent = () => {
   const router = useRouter();
+  const { user, perfil: authPerfil } = useAuth();
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -13,24 +16,19 @@ const MyProfilePage = () => {
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        // Obtener el usuario actual
-        const { data: { user }, error: userError } = await supabase.auth.getUser();
-
-        if (userError || !user) {
-          setError("Debes estar loggeado para ver tu perfil.");
+        if (authPerfil) {
+          setProfile(authPerfil);
+          setLoading(false);
           return;
         }
 
-        // Obtener el perfil del usuario actual
         const { data: profileData, error: profileError } = await supabase
           .from("perfil")
           .select("*")
           .eq("id_perfil", user.id)
           .single();
 
-        if (profileError) {
-          throw profileError;
-        }
+        if (profileError) throw profileError;
 
         setProfile(profileData);
       } catch (err) {
@@ -41,8 +39,10 @@ const MyProfilePage = () => {
       }
     };
 
-    fetchProfile();
-  }, []);
+    if (user) {
+      fetchProfile();
+    }
+  }, [user, authPerfil]);
 
   if (loading) {
     return (
@@ -59,6 +59,14 @@ const MyProfilePage = () => {
           <strong className="font-bold">Error: </strong>
           <span className="block sm:inline">{error}</span>
         </div>
+      </div>
+    );
+  }
+
+  if (!profile) {
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-gray-850">
+        <p className="text-gray-100">No se encontró el perfil.</p>
       </div>
     );
   }
@@ -138,6 +146,14 @@ const MyProfilePage = () => {
         </div>
       </div>
     </div>
+  );
+};
+
+const MyProfilePage = () => {
+  return (
+    <ProtectedRoute>
+      <ProfileContent />
+    </ProtectedRoute>
   );
 };
 
