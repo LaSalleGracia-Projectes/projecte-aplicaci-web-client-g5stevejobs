@@ -133,11 +133,22 @@ export default function PostListClient() {
         <div className="space-y-4">
           {posts.map((post) => (
             <div key={post.id_publicacion} className="bg-gray-800 rounded-lg p-6 shadow-lg">
-              <Link href={`/foro/${post.id_publicacion}`}>
-                <h2 className="text-xl font-bold text-white mb-2 hover:text-blue-400">
-                  {post.titulo}
-                </h2>
-              </Link>
+              <div className="flex justify-between items-start mb-2">
+                <Link href={`/foro/${post.id_publicacion}`}>
+                  <h2 className="text-xl font-bold text-white hover:text-blue-400">
+                    {post.titulo}
+                  </h2>
+                </Link>
+                {user && user.id !== post.id_perfil && (
+                  <button
+                    onClick={() => router.push(`/report?user=${post.perfil.usuario}`)}
+                    className="bg-red-600 text-white text-sm px-3 py-1 rounded hover:bg-red-700 transition-colors"
+                    title="Reportar usuario"
+                  >
+                    Reportar
+                  </button>
+                )}
+              </div>
               <p className="text-gray-300 mb-4">
                 {post.contenido.length > 200
                   ? `${post.contenido.substring(0, 200)}...`
