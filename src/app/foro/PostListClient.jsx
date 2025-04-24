@@ -121,12 +121,21 @@ export default function PostListClient() {
         <div className="flex justify-between items-center">
           <h1 className="text-2xl font-bold text-white">Foro de Discusión</h1>
           {user && (
-            <button
-              onClick={() => router.push('/foro/create')}
-              className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-500"
-            >
-              Nueva Publicación
-            </button>
+            <div className="flex gap-4">
+              <button
+                onClick={() => router.push('/foro/create')}
+                className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-500"
+              >
+                Nueva Publicación
+              </button>
+              <button
+                onClick={() => router.push('/report')}
+                className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700"
+                title="Reportar usuario"
+              >
+                Reportar Usuario
+              </button>
+            </div>
           )}
         </div>
 
@@ -139,15 +148,6 @@ export default function PostListClient() {
                     {post.titulo}
                   </h2>
                 </Link>
-                {user && user.id !== post.id_perfil && (
-                  <button
-                    onClick={() => router.push(`/report?user=${post.perfil.usuario}`)}
-                    className="bg-red-600 text-white text-sm px-3 py-1 rounded hover:bg-red-700 transition-colors"
-                    title="Reportar usuario"
-                  >
-                    Reportar
-                  </button>
-                )}
               </div>
               <p className="text-gray-300 mb-4">
                 {post.contenido.length > 200

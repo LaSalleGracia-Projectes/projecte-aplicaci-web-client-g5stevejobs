@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { db, storage } from "../../firebase";
-import { collection, addDoc } from "firebase/firestore";
+import { collection, addDoc, doc, updateDoc } from "firebase/firestore";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { useAuth } from "../../context/AuthContext";
 import { toast } from "react-hot-toast";
@@ -21,6 +21,15 @@ const ReportPage = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [userProfile, setUserProfile] = useState(null);
   const { user } = useAuth();
+
+  // Verificar Firebase al cargar
+  useEffect(() => {
+    console.log("Verificando Firebase:", {
+      dbExists: !!db,
+      storageExists: !!storage,
+      collectionRef: !!collection(db, "reports")
+    });
+  }, []);
 
   // Razones predefinidas para reportar
   const reportReasons = [
@@ -49,6 +58,7 @@ const ReportPage = () => {
 
           if (error) throw error;
           setUserProfile(data);
+          console.log("Perfil de usuario cargado:", data);
         } catch (error) {
           console.error('Error al obtener el perfil:', error);
         }
@@ -75,9 +85,20 @@ const ReportPage = () => {
     }
   };
 
+  // Función para convertir imagen a base64
+  const convertToBase64 = (file) => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = (error) => reject(error);
+    });
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError(null);
+    console.log("Iniciando envío de reporte...");
 
     if (!reportedUser || !reason || !description) {
       setError("Los campos Usuario, Razón y Descripción son obligatorios.");
@@ -87,27 +108,43 @@ const ReportPage = () => {
     setIsSubmitting(true);
 
     try {
-      let imageUrl = null;
-      if (image) {
-        const storageRef = ref(storage, `reports/${Date.now()}_${image.name}`);
-        await uploadBytes(storageRef, image);
-        imageUrl = await getDownloadURL(storageRef);
-      }
+      // Verificar Firebase
+      console.log("Estado de Firebase:", {
+        dbExists: !!db,
+        userExists: !!user,
+        userProfile: userProfile
+      });
 
+      // Preparar los datos del reporte
       const reportData = {
         reported_user: reportedUser,
         reason,
         description,
-        image_url: imageUrl,
         status: "pendiente",
-        created_at: new Date(),
-        reporter_id: user?.id,
-        reporter_username: userProfile?.usuario,
+        created_at: new Date().toISOString(),
+        reporter_id: user?.id || null,
+        reporter_username: userProfile?.usuario || null,
+        image_data: null
       };
 
-      await addDoc(collection(db, "reports"), reportData);
+      // Si hay imagen, convertirla a base64
+      if (image) {
+        try {
+          console.log("Convirtiendo imagen a base64...");
+          const base64Image = await convertToBase64(image);
+          reportData.image_data = base64Image;
+          console.log("Imagen convertida exitosamente");
+        } catch (imageError) {
+          console.error("Error al procesar la imagen:", imageError);
+          // Continuamos sin la imagen si hay error
+        }
+      }
 
-      toast.success("Reporte enviado correctamente.");
+      console.log("Guardando reporte en Firestore...");
+      const docRef = await addDoc(collection(db, "reports"), reportData);
+      console.log("Reporte guardado con ID:", docRef.id);
+
+      toast.success("Reporte enviado correctamente");
       router.push('/foro');
     } catch (error) {
       console.error("Error al enviar el reporte:", error);
