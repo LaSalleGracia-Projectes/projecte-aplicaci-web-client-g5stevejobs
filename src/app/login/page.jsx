@@ -5,11 +5,13 @@ import Link from "next/link";
 import { supabase } from "../../supabaseClient";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useAuth } from "../../context/AuthContext";
+import { useLanguage } from "../../context/LanguageContext";
 
 const Login = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { user, isBanned, banReason, banExpiration, getBanTimeLeft } = useAuth();
+  const { t } = useLanguage();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState(null);
@@ -59,10 +61,10 @@ const Login = () => {
           if (expirationDate > now) {
             await supabase.auth.signOut();
             setBanInfo({
-              reason: profile.ban_reason || 'No se proporcionó razón',
+              reason: profile.ban_reason || t.noReasonProvided || 'No se proporcionó razón',
               expiration: expirationDate
             });
-            setError('Tu cuenta está baneada');
+            setError(t.accountBanned || 'Tu cuenta está baneada');
             setLoading(false);
             return;
           }
@@ -91,7 +93,7 @@ const Login = () => {
     const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
     const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
     
-    return `${days} días, ${hours} horas y ${minutes} minutos`;
+    return `${days} ${t.days || 'días'}, ${hours} ${t.hours || 'horas'} ${t.and || 'y'} ${minutes} ${t.minutes || 'minutos'}`;
   };
 
   // Formatear la fecha de expiración para mostrarla
@@ -109,33 +111,33 @@ const Login = () => {
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-850">
       <div className="bg-gray-800 p-8 rounded shadow-lg w-full max-w-md">
-        <h1 className="text-2xl font-bold mb-4 text-center text-gray-100">Iniciar Sesión</h1>
+        <h1 className="text-2xl font-bold mb-4 text-center text-gray-100">{t.login || "Iniciar Sesión"}</h1>
         
         <p className="text-center mb-4 text-gray-300">
-          ¿No tienes una cuenta?{" "}
+          {t.noAccount || "¿No tienes una cuenta?"}{" "}
           <Link href="/signup" className="text-blue-500">
-            ¡Regístrate!
+            {t.signUp || "¡Regístrate!"}
           </Link>
         </p>
         
         {(banInfo || isBanned) && (
           <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4">
-            <strong className="font-bold">¡Cuenta baneada!</strong>
+            <strong className="font-bold">{t.accountBanned || "¡Cuenta baneada!"}</strong>
             <span className="block sm:inline">
               {banInfo?.reason || banReason}
             </span>
             <span className="block sm:inline mt-2">
-              Tiempo restante: {formatTimeLeft(banInfo?.expiration || banExpiration)}
+              {t.timeLeft || "Tiempo restante"}: {formatTimeLeft(banInfo?.expiration || banExpiration)}
             </span>
             <span className="block sm:inline mt-2">
-              Fecha de desbaneo: {formatExpirationDate(banInfo?.expiration || banExpiration)}
+              {t.unbanDate || "Fecha de desbaneo"}: {formatExpirationDate(banInfo?.expiration || banExpiration)}
             </span>
           </div>
         )}
         
         <form onSubmit={handleLogin} className="space-y-4">
           <div>
-            <label className="block mb-2 text-gray-300">Email:</label>
+            <label className="block mb-2 text-gray-300">{t.email || "Email"}:</label>
             <input
               type="email"
               value={email}
@@ -145,7 +147,7 @@ const Login = () => {
             />
           </div>
           <div>
-            <label className="block mb-2 text-gray-300">Contraseña:</label>
+            <label className="block mb-2 text-gray-300">{t.password || "Contraseña"}:</label>
             <input
               type="password"
               value={password}
@@ -157,7 +159,7 @@ const Login = () => {
           
           {error && (
             <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4">
-              <strong className="font-bold">Error: </strong>
+              <strong className="font-bold">{t.error || "Error"}: </strong>
               <span className="block sm:inline">{error}</span>
             </div>
           )}
@@ -166,7 +168,7 @@ const Login = () => {
             className="w-full bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-500 disabled:opacity-50"
             disabled={loading || isBanned}
           >
-            {loading ? "Iniciando sesión..." : "Iniciar Sesión"}
+            {loading ? (t.loggingIn || "Iniciando sesión...") : (t.login || "Iniciar Sesión")}
           </button>
         </form>
       </div>
