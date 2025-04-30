@@ -23,6 +23,20 @@ export const es = {
   forgotPassword: "¿Olvidaste tu contraseña?",
   noAccount: "¿No tienes una cuenta?",
   haveAccount: "¿Ya tienes una cuenta?",
+  passwordsDoNotMatch: "Las contraseñas no coinciden.",
+  passwordMinLength: "La contraseña debe tener al menos 6 caracteres.",
+  usernameMinLength: "El nombre de usuario debe tener al menos 3 caracteres.",
+  rateLimitExceeded: "Has excedido el límite de intentos. Por favor, espera unos minutos.",
+  emailAlreadyRegistered: "Este email ya está registrado. Por favor, inicia sesión.",
+  usernameInUse: "El nombre de usuario ya está en uso.",
+  emailInUse: "Este email ya está registrado.",
+  userOrEmailInUse: "Este usuario o email ya está registrado.",
+  profileError: "Error al crear el perfil",
+  userCreationError: "Error al crear el usuario. Por favor, intenta de nuevo.",
+  unexpectedError: "Ocurrió un error inesperado. Por favor, intenta de nuevo más tarde.",
+  unknownError: "Error desconocido",
+  registrationSuccess: "¡Usuario registrado! Por favor, verifica tu correo electrónico para confirmar tu cuenta.",
+  registering: "Registrando...",
   
   // Perfil
   editProfile: "Editar Perfil",
@@ -133,4 +147,26 @@ export const es = {
   
   // Homepage
   gameInfo: "Información del juego",
+  
+  // About Us page
+  aboutUsDescription: "Somos un equipo de desarrolladores apasionados por los juegos de aventura y terror. The Abyss es nuestro proyecto insignia, creado con amor y dedicación.",
+  aboutUsText1: "The Abyss es un juego de aventura y terror desarrollado por un pequeño equipo de estudiantes apasionados por crear experiencias inmersivas y aterradoras.",
+  aboutUsText2: "Nos inspiramos en clásicos del género como Silent Hill y Resident Evil, pero aportamos nuestro propio estilo y narrativa única que seguramente te mantendrá al borde de tu asiento.",
+  aboutUsText3: "Nuestro objetivo es crear experiencias de juego memorables que desafíen tu percepción y te sumerjan en un mundo de misterio y terror. ¡Esperamos que disfrutes de The Abyss!",
+  
+  // Forum page
+  errorLoadingPosts: "Error al cargar las publicaciones. Por favor, inténtalo de nuevo más tarde.",
+  pleaseCompleteAllFields: "Por favor, completa todos los campos",
+  errorCreatingPost: "Error al crear el post. Por favor, inténtalo de nuevo.",
+  forumDiscussion: "Foro de Discusión",
+  
+  // Contact page
+  allFieldsRequired: "Todos los campos son obligatorios.",
+  invalidEmailFormat: "Email con formato inválido.",
+  messageSentSuccess: "Mensaje enviado correctamente. Nos pondremos en contacto contigo pronto.",
+  errorSendingMessage: "Error al enviar el mensaje. Por favor, inténtalo de nuevo.",
+  emailPlaceholder: "tu@email.com",
+  subjectPlaceholder: "Asunto de tu mensaje",
+  descriptionPlaceholder: "Describe tu consulta, problema o sugerencia...",
+  sending: "Enviando...",
 }; 

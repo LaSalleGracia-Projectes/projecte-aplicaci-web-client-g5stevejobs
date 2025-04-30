@@ -4,9 +4,11 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { supabase } from "../../supabaseClient";
 import { useRouter } from "next/navigation";
+import { useLanguage } from "../../context/LanguageContext";
 
 const SignUp = () => {
   const router = useRouter();
+  const { t } = useLanguage(); // Get translations
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -21,17 +23,17 @@ const SignUp = () => {
 
     try {
       if (password !== confirmPassword) {
-        setError("Las contraseñas no coinciden.");
+        setError(t.passwordsDoNotMatch || "Las contraseñas no coinciden.");
         return;
       }
 
       if (password.length < 6) {
-        setError("La contraseña debe tener al menos 6 caracteres.");
+        setError(t.passwordMinLength || "La contraseña debe tener al menos 6 caracteres.");
         return;
       }
 
       if (username.length < 3) {
-        setError("El nombre de usuario debe tener al menos 3 caracteres.");
+        setError(t.usernameMinLength || "El nombre de usuario debe tener al menos 3 caracteres.");
         return;
       }
 
@@ -50,11 +52,11 @@ const SignUp = () => {
         console.error("Error de registro:", signUpError);
 
         if (signUpError.message.includes("Email rate limit exceeded")) {
-          setError("Has excedido el límite de intentos. Por favor, espera unos minutos.");
+          setError(t.rateLimitExceeded || "Has excedido el límite de intentos. Por favor, espera unos minutos.");
         } else if (signUpError.message.includes("User already registered")) {
-          setError("Este email ya está registrado. Por favor, inicia sesión.");
+          setError(t.emailAlreadyRegistered || "Este email ya está registrado. Por favor, inicia sesión.");
         } else {
-          setError(`Error de registro: ${signUpError.message}`);
+          setError(`${t.error || "Error"}: ${signUpError.message}`);
         }
         return;
       }
@@ -73,27 +75,27 @@ const SignUp = () => {
         if (profileError) {
           if (profileError.code === "23505") {
             if (profileError.message.includes("usuario")) {
-              setError("El nombre de usuario ya está en uso.");
+              setError(t.usernameInUse || "El nombre de usuario ya está en uso.");
             } else if (profileError.message.includes("email")) {
-              setError("Este email ya está registrado.");
+              setError(t.emailInUse || "Este email ya está registrado.");
             } else {
-              setError("Este usuario o email ya está registrado.");
+              setError(t.userOrEmailInUse || "Este usuario o email ya está registrado.");
             }
           } else {
             console.error("Error al crear el perfil:", profileError);
-            setError(`Error al crear el perfil: ${profileError.message || "Error desconocido"}`);
+            setError(`${t.profileError || "Error al crear el perfil"}: ${profileError.message || t.unknownError || "Error desconocido"}`);
           }
           return;
         }
 
-        alert("¡Usuario registrado! Por favor, verifica tu correo electrónico para confirmar tu cuenta.");
+        alert(t.registrationSuccess || "¡Usuario registrado! Por favor, verifica tu correo electrónico para confirmar tu cuenta.");
         router.push("/login");
       } else {
-        setError("Error al crear el usuario. Por favor, intenta de nuevo.");
+        setError(t.userCreationError || "Error al crear el usuario. Por favor, intenta de nuevo.");
       }
     } catch (err) {
       console.error("Error inesperado:", err);
-      setError("Ocurrió un error inesperado. Por favor, intenta de nuevo más tarde.");
+      setError(t.unexpectedError || "Ocurrió un error inesperado. Por favor, intenta de nuevo más tarde.");
     } finally {
       setLoading(false);
     }
@@ -102,25 +104,25 @@ const SignUp = () => {
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-850">
       <div className="bg-gray-800 p-8 rounded shadow-lg w-full max-w-md">
-        <h1 className="text-2xl font-bold mb-4 text-center text-gray-100">Regístrate</h1>
+        <h1 className="text-2xl font-bold mb-4 text-center text-gray-100">{t.register || "Regístrate"}</h1>
 
         <p className="text-center mb-4 text-gray-300">
-          ¿Ya tienes una cuenta?{" "}
+          {t.haveAccount || "¿Ya tienes una cuenta?"}{" "}
           <Link href="/login" className="text-blue-500">
-            ¡Inicia sesión!
+            {t.login || "¡Inicia sesión!"}
           </Link>
         </p>
 
         {error && (
           <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4">
-            <strong className="font-bold">Error: </strong>
+            <strong className="font-bold">{t.error || "Error"}: </strong>
             <span className="block sm:inline">{error}</span>
           </div>
         )}
 
         <form onSubmit={handleSignUp} className="space-y-4">
           <div>
-            <label className="block mb-2 text-gray-300">Nombre de usuario:</label>
+            <label className="block mb-2 text-gray-300">{t.username || "Nombre de usuario"}:</label>
             <input
               type="text"
               value={username}
@@ -131,7 +133,7 @@ const SignUp = () => {
             />
           </div>
           <div>
-            <label className="block mb-2 text-gray-300">Email:</label>
+            <label className="block mb-2 text-gray-300">{t.email || "Email"}:</label>
             <input
               type="email"
               value={email}
@@ -141,7 +143,7 @@ const SignUp = () => {
             />
           </div>
           <div>
-            <label className="block mb-2 text-gray-300">Contraseña:</label>
+            <label className="block mb-2 text-gray-300">{t.password || "Contraseña"}:</label>
             <input
               type="password"
               value={password}
@@ -152,7 +154,7 @@ const SignUp = () => {
             />
           </div>
           <div>
-            <label className="block mb-2 text-gray-300">Confirmar Contraseña:</label>
+            <label className="block mb-2 text-gray-300">{t.confirmPassword || "Confirmar Contraseña"}:</label>
             <input
               type="password"
               value={confirmPassword}
@@ -166,7 +168,7 @@ const SignUp = () => {
             className="w-full bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-500 disabled:opacity-50"
             disabled={loading}
           >
-            {loading ? "Registrando..." : "Regístrame"}
+            {loading ? (t.registering || "Registrando...") : (t.register || "Regístrame")}
           </button>
         </form>
       </div>

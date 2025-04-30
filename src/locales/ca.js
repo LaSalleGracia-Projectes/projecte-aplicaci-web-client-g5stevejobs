@@ -23,6 +23,20 @@ export const ca = {
   forgotPassword: "Has oblidat la teva contrasenya?",
   noAccount: "No tens un compte?",
   haveAccount: "Ja tens un compte?",
+  passwordsDoNotMatch: "Les contrasenyes no coincideixen.",
+  passwordMinLength: "La contrasenya ha de tenir almenys 6 caràcters.",
+  usernameMinLength: "El nom d'usuari ha de tenir almenys 3 caràcters.",
+  rateLimitExceeded: "Has excedit el límit d'intents. Sisplau, espera uns minuts.",
+  emailAlreadyRegistered: "Aquest correu electrònic ja està registrat. Sisplau, inicia sessió.",
+  usernameInUse: "Aquest nom d'usuari ja està en ús.",
+  emailInUse: "Aquest correu electrònic ja està registrat.",
+  userOrEmailInUse: "Aquest usuari o correu electrònic ja està registrat.",
+  profileError: "Error en crear el perfil",
+  userCreationError: "Error en crear l'usuari. Sisplau, torna-ho a provar.",
+  unexpectedError: "Ha ocorregut un error inesperat. Sisplau, torna-ho a provar més tard.",
+  unknownError: "Error desconegut",
+  registrationSuccess: "Usuari registrat! Sisplau, verifica el teu correu electrònic per confirmar el teu compte.",
+  registering: "Registrant...",
   
   // Perfil
   editProfile: "Editar Perfil",
@@ -132,5 +146,28 @@ export const ca = {
   and: "i",
   
   // Homepage
-  gameInfo: "Informació del joc"
+  gameInfo: "Informació del joc",
+  
+  // About Us page
+  aboutUsDescription: "Som un equip de desenvolupadors apassionats pels jocs d'aventura i terror. The Abyss és el nostre projecte insígnia, creat amb amor i dedicació.",
+  aboutUsText1: "The Abyss és un joc d'aventura i terror desenvolupat per un petit equip d'estudiants apassionats per crear experiències immersives i terrorífiques.",
+  aboutUsText2: "Ens inspirem en clàssics del gènere com Silent Hill i Resident Evil, però aportem el nostre propi estil i narrativa única que segurament et mantindrà al límit del teu seient.",
+  aboutUsText3: "El nostre objectiu és crear experiències de joc memorables que desafiïn la teva percepció i t'immergeixin en un món de misteri i terror. Esperem que gaudeixis de The Abyss!",
+  
+  // Forum page
+  errorLoadingPosts: "Error en carregar les publicacions. Si us plau, torna-ho a provar més tard.",
+  pleaseCompleteAllFields: "Si us plau, completa tots els camps",
+  errorCreatingPost: "Error en crear la publicació. Si us plau, torna-ho a provar.",
+  forumDiscussion: "Fòrum de Discussió",
+  
+  // Contact page
+  allFieldsRequired: "Tots els camps són obligatoris.",
+  invalidEmailFormat: "Format d'email invàlid.",
+  messageSentSuccess: "Missatge enviat correctament. Ens posarem en contacte amb tu aviat.",
+  errorSendingMessage: "Error en enviar el missatge. Si us plau, torna-ho a provar.",
+  emailPlaceholder: "el-teu@email.com",
+  subjectPlaceholder: "Assumpte del teu missatge",
+  descriptionPlaceholder: "Descriu la teva consulta, problema o suggeriment...",
+  sending: "Enviant...",
+  description: "Descripció",
 }; 

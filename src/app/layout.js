@@ -16,10 +16,10 @@ export default function RootLayout({ children }) {
       <body>
         <AuthProvider>
           <LanguageProvider>
-            <Toaster position="top-right" />
-            <Header />
-            {children}
-            <Footer />
+          <Toaster position="top-right" />
+          <Header />
+          {children}
+          <Footer />
           </LanguageProvider>
         </AuthProvider>
       </body>

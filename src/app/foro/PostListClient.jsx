@@ -5,6 +5,7 @@ import { supabase } from '../../supabaseClient';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '../../context/AuthContext';
+import { useLanguage } from '../../context/LanguageContext';
 
 export default function PostListClient() {
   const [posts, setPosts] = useState([]);
@@ -14,6 +15,7 @@ export default function PostListClient() {
   const [newPostContent, setNewPostContent] = useState('');
   const router = useRouter();
   const { user } = useAuth();
+  const { t, currentLanguage } = useLanguage();
 
   useEffect(() => {
     fetchPosts();
@@ -36,7 +38,7 @@ export default function PostListClient() {
       setPosts(data || []);
     } catch (error) {
       console.error('Error fetching posts:', error);
-      setError('Error al cargar las publicaciones. Por favor, inténtalo de nuevo más tarde.');
+      setError(t.errorLoadingPosts || 'Error al cargar las publicaciones. Por favor, inténtalo de nuevo más tarde.');
     } finally {
       setLoading(false);
     }
@@ -50,7 +52,7 @@ export default function PostListClient() {
     }
 
     if (!newPostTitle.trim() || !newPostContent.trim()) {
-      setError('Por favor, completa todos los campos');
+      setError(t.pleaseCompleteAllFields || 'Por favor, completa todos los campos');
       return;
     }
 
@@ -78,14 +80,17 @@ export default function PostListClient() {
       router.push(`/foro/${slug}`);
     } catch (error) {
       console.error('Error creating post:', error);
-      setError('Error al crear el post. Por favor, inténtalo de nuevo.');
+      setError(t.errorCreatingPost || 'Error al crear el post. Por favor, inténtalo de nuevo.');
     } finally {
       setLoading(false);
     }
   };
 
   const formatDate = (dateString) => {
-    return new Date(dateString).toLocaleDateString('es-ES', {
+    const locale = currentLanguage === 'en' ? 'en-US' : 
+                  currentLanguage === 'ca' ? 'ca-ES' : 'es-ES';
+    
+    return new Date(dateString).toLocaleDateString(locale, {
       year: 'numeric',
       month: 'long',
       day: 'numeric',
@@ -96,7 +101,7 @@ export default function PostListClient() {
     return (
       <div className="min-h-screen bg-gray-850 p-4">
         <div className="max-w-4xl mx-auto">
-          <p className="text-white">Cargando publicaciones...</p>
+          <p className="text-white">{t.loading || "Cargando publicaciones..."}</p>
         </div>
       </div>
     );
@@ -107,7 +112,7 @@ export default function PostListClient() {
       <div className="min-h-screen bg-gray-850 p-4">
         <div className="max-w-4xl mx-auto">
           <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative">
-            <strong className="font-bold">Error: </strong>
+            <strong className="font-bold">{t.error || "Error"}: </strong>
             <span className="block sm:inline">{error}</span>
           </div>
         </div>
@@ -119,21 +124,21 @@ export default function PostListClient() {
     <div className="min-h-screen bg-gray-850 p-4">
       <div className="max-w-4xl mx-auto space-y-6">
         <div className="flex justify-between items-center">
-          <h1 className="text-2xl font-bold text-white">Foro de Discusión</h1>
+          <h1 className="text-2xl font-bold text-white">{t.forum || "Foro de Discusión"}</h1>
           {user && (
             <div className="flex gap-4">
               <button
                 onClick={() => router.push('/foro/create')}
                 className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-500"
               >
-                Nueva Publicación
+                {t.createPost || "Nueva Publicación"}
               </button>
               <button
                 onClick={() => router.push('/report')}
                 className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700"
-                title="Reportar usuario"
+                title={t.reportUser || "Reportar usuario"}
               >
-                Reportar Usuario
+                {t.reportUser || "Reportar Usuario"}
               </button>
             </div>
           )}
@@ -158,7 +163,7 @@ export default function PostListClient() {
                 <Link href={`/perfil/${post.perfil.usuario}`} className="hover:text-blue-400">
                   {post.perfil.usuario}
                 </Link>
-                <span>{new Date(post.fecha_publicacion).toLocaleDateString('es-ES')}</span>
+                <span>{formatDate(post.fecha_publicacion)}</span>
                 {post.topico && (
                   <span className="bg-blue-600 text-white px-2 py-1 rounded-full text-xs">
                     {post.topico}

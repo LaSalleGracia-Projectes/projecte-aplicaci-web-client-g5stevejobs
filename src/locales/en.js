@@ -23,6 +23,20 @@ export const en = {
   forgotPassword: "Forgot your password?",
   noAccount: "Don't have an account?",
   haveAccount: "Already have an account?",
+  passwordsDoNotMatch: "Passwords do not match.",
+  passwordMinLength: "Password must be at least 6 characters long.",
+  usernameMinLength: "Username must be at least 3 characters long.",
+  rateLimitExceeded: "You have exceeded the limit of attempts. Please wait a few minutes.",
+  emailAlreadyRegistered: "This email is already registered. Please log in.",
+  usernameInUse: "This username is already in use.",
+  emailInUse: "This email is already registered.",
+  userOrEmailInUse: "This username or email is already registered.",
+  profileError: "Error creating profile",
+  userCreationError: "Error creating user. Please try again.",
+  unexpectedError: "An unexpected error occurred. Please try again later.",
+  unknownError: "Unknown error",
+  registrationSuccess: "User registered! Please check your email to confirm your account.",
+  registering: "Registering...",
   
   // Profile
   editProfile: "Edit Profile",
@@ -132,5 +146,28 @@ export const en = {
   and: "and",
   
   // Homepage
-  gameInfo: "Game information"
+  gameInfo: "Game information",
+  
+  // About Us page
+  aboutUsDescription: "We are a team of developers passionate about adventure and horror games. The Abyss is our flagship project, created with love and dedication.",
+  aboutUsText1: "The Abyss is an adventure and horror game developed by a small team of students passionate about creating immersive and terrifying experiences.",
+  aboutUsText2: "We are inspired by classics of the genre such as Silent Hill and Resident Evil, but we bring our own style and unique narrative that will surely keep you on the edge of your seat.",
+  aboutUsText3: "Our goal is to create memorable gaming experiences that challenge your perception and immerse you in a world of mystery and terror. We hope you enjoy The Abyss!",
+  
+  // Forum page
+  errorLoadingPosts: "Error loading posts. Please try again later.",
+  pleaseCompleteAllFields: "Please complete all fields",
+  errorCreatingPost: "Error creating post. Please try again.",
+  forumDiscussion: "Discussion Forum",
+  
+  // Contact page
+  allFieldsRequired: "All fields are required.",
+  invalidEmailFormat: "Invalid email format.",
+  messageSentSuccess: "Message sent successfully. We will contact you soon.",
+  errorSendingMessage: "Error sending message. Please try again.",
+  emailPlaceholder: "your@email.com",
+  subjectPlaceholder: "Subject of your message",
+  descriptionPlaceholder: "Describe your question, problem or suggestion...",
+  sending: "Sending...",
+  description: "Description"
 }; 
