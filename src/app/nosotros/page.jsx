@@ -2,6 +2,9 @@
 
 import React from 'react';
 import { useLanguage } from '../../context/LanguageContext';
+import OSMMap from '../../components/OSMMap';
+import WeatherWidget from '../../components/WeatherWidget';
+import DailyQuote from '../../components/DailyQuote';
 
 const NosotrosPage = () => {
   const { t } = useLanguage(); // Get translations
@@ -28,6 +31,27 @@ const NosotrosPage = () => {
               {t.aboutUsText3 || "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique."}
             </p>
           </div>
+        </section>
+
+        {/* Office Location Section - PRIMERO */}
+        <section className="bg-gray-800 p-6 rounded-lg shadow-md mb-8">
+          <h2 className="text-2xl font-bold mb-4">{t.ourOffice || "Nuestra Oficina"}</h2>
+          <p className="mb-4">{t.officeLocation || "La Salle Campus Barcelona, Carrer de Sant Joan de La Salle, 42, 08022 Barcelona"}</p>
+          <div className="h-96 w-full">
+            <OSMMap />
+          </div>
+        </section>
+
+        {/* Weather Section - SEGUNDO */}
+        <section className="bg-gray-800 p-6 rounded-lg shadow-md mb-8">
+          <h2 className="text-2xl font-bold mb-4">{t.currentWeather || "Clima en Barcelona"}</h2>
+          <WeatherWidget />
+        </section>
+
+        {/* Daily Quote Section - TERCERO */}
+        <section className="bg-gray-800 p-6 rounded-lg shadow-md mb-8">
+          <h2 className="text-2xl font-bold mb-4">{t.dailyQuote || "Frase del Día"}</h2>
+          <DailyQuote />
         </section>
       </main>
     </div>
