@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
@@ -10,6 +10,25 @@ import { supabase } from '../supabaseClient'; // Importa el cliente de Supabase
 import styles from './Header.module.css'; // Módulo CSS para estilos
 import { languages } from '../locales';
 import { toast } from 'react-hot-toast';
+
+// Array con información de banderas para cada idioma
+const languageFlags = {
+  es: {
+    name: "Español",
+    flag: "/images/flags/spain.png",
+    alt: "Bandera de España"
+  },
+  ca: {
+    name: "Catalán",
+    flag: "/images/flags/catalonia.png",
+    alt: "Bandera de Cataluña"
+  },
+  en: {
+    name: "English",
+    flag: "/images/flags/uk.png",
+    alt: "Bandera de Reino Unido"
+  }
+};
 
 const Header = () => {
   const currentPath = usePathname();
@@ -25,6 +44,34 @@ const Header = () => {
   const [profileImage, setProfileImage] = useState(null);
   // Estado para controlar si se está procesando el cierre de sesión
   const [isLoggingOut, setIsLoggingOut] = useState(false);
+
+  // Referencias para detectar clics fuera de los menús desplegables
+  const userMenuRef = useRef(null);
+  const languageMenuRef = useRef(null);
+  const burgerMenuRef = useRef(null);
+
+  // Manejador de clics fuera de los menús desplegables
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (userMenuRef.current && !userMenuRef.current.contains(event.target)) {
+        setIsDropdownOpen(false);
+      }
+      
+      if (languageMenuRef.current && !languageMenuRef.current.contains(event.target)) {
+        setIsLanguageDropdownOpen(false);
+      }
+      
+      if (burgerMenuRef.current && !burgerMenuRef.current.contains(event.target) &&
+          !document.querySelector(`.${styles.nav}`).contains(event.target)) {
+        setIsMenuOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
 
   // Obtener la imagen de perfil desde Supabase
   useEffect(() => {
@@ -178,16 +225,16 @@ const Header = () => {
 
       <button 
         className={styles.burgerMenu} 
-        onMouseEnter={() => setIsMenuOpen(true)}
-        onMouseLeave={() => setIsMenuOpen(false)}
+        onClick={() => setIsMenuOpen(!isMenuOpen)}
         aria-label="Menu"
+        ref={burgerMenuRef}
       >
         <span className={`${styles.burgerLine} ${isMenuOpen ? styles.open : ''}`}></span>
         <span className={`${styles.burgerLine} ${isMenuOpen ? styles.open : ''}`}></span>
         <span className={`${styles.burgerLine} ${isMenuOpen ? styles.open : ''}`}></span>
       </button>
 
-      <nav className={styles.nav}>
+      <nav className={`${styles.nav} ${isMenuOpen ? styles.open : ''}`}>
         <Link href="/">
           <h3 className={`${styles.navItem} ${currentPath === '/' ? styles.active : ''}`}>{t.download || "Descarga"}</h3>
         </Link>
@@ -205,22 +252,37 @@ const Header = () => {
         </Link>
       </nav>
 
-      <div className={styles.languageSelector} onMouseEnter={() => setIsLanguageDropdownOpen(true)} onMouseLeave={() => setIsLanguageDropdownOpen(false)}>
-        <span className={styles.navItem}>
-          {languages.find(lang => lang.code === currentLanguage)?.name || "Español"}
-        </span>
+      <div className={styles.languageSelector} onClick={() => setIsLanguageDropdownOpen(!isLanguageDropdownOpen)} ref={languageMenuRef}>
+        <div className={styles.currentLanguageFlag}>
+          <Image 
+            src={languageFlags[currentLanguage]?.flag || "/images/flags/spain.png"}
+            alt={languageFlags[currentLanguage]?.alt || "Bandera"}
+            width={36}
+            height={36}
+            className={styles.flagIcon}
+            unoptimized
+          />
+        </div>
         {isLanguageDropdownOpen && (
           <div className={styles.dropdownMenu}>
-            {languages.map((lang) => (
+            {Object.keys(languageFlags).map((langCode) => (
               <button
-                key={lang.code}
-                className={`${styles.dropdownItem} ${currentLanguage === lang.code ? styles.active : ''}`}
+                key={langCode}
+                className={`${styles.dropdownItem} ${styles.languageItem} ${currentLanguage === langCode ? styles.active : ''}`}
                 onClick={() => {
-                  changeLanguage(lang.code);
+                  changeLanguage(langCode);
                   setIsLanguageDropdownOpen(false);
                 }}
               >
-                {lang.name}
+                <Image 
+                  src={languageFlags[langCode].flag}
+                  alt={languageFlags[langCode].alt}
+                  width={36}
+                  height={36}
+                  className={styles.flagIcon}
+                  unoptimized
+                />
+                <span className={styles.languageName}>{languageFlags[langCode].name}</span>
               </button>
             ))}
           </div>
@@ -257,7 +319,7 @@ const Header = () => {
       </form>
 
       {user ? (
-        <div className={styles.userMenu} onMouseEnter={() => setIsDropdownOpen(true)} onMouseLeave={() => setIsDropdownOpen(false)}>
+        <div className={styles.userMenu} onClick={() => setIsDropdownOpen(!isDropdownOpen)} ref={userMenuRef}>
           <div className={styles.userMenuTrigger}>
             <div className={styles.profileImageContainer}>
               {profileImage ? (
