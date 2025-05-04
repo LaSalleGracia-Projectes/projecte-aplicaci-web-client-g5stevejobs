@@ -9,6 +9,7 @@ import { useLanguage } from '../context/LanguageContext';
 import { supabase } from '../supabaseClient'; // Importa el cliente de Supabase
 import styles from './Header.module.css'; // Módulo CSS para estilos
 import { languages } from '../locales';
+import { toast } from 'react-hot-toast';
 
 const Header = () => {
   const currentPath = usePathname();
@@ -60,34 +61,98 @@ const Header = () => {
     fetchProfileImage();
   }, [user]);
 
+  // Función para realizar una limpieza agresiva de la sesión
+  const forceCleanupSession = () => {
+    // 1. Limpieza de localStorage
+    try {
+      // Tokens de Supabase
+      localStorage.removeItem('supabase.auth.token');
+      localStorage.removeItem('sb-localhost-auth-token');
+      localStorage.removeItem('sb-auth-token');
+      
+      // Cualquier otro item de almacenamiento que pueda estar relacionado
+      const keysToRemove = [];
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (key && (key.includes('supabase') || key.includes('auth') || key.includes('user'))) {
+          keysToRemove.push(key);
+        }
+      }
+      
+      keysToRemove.forEach(key => localStorage.removeItem(key));
+      
+      console.log('Limpieza de localStorage completada');
+    } catch (e) {
+      console.error('Error al limpiar localStorage:', e);
+    }
+    
+    // 2. Limpieza de sessionStorage
+    try {
+      sessionStorage.removeItem('returnUrl');
+      sessionStorage.clear();
+      console.log('Limpieza de sessionStorage completada');
+    } catch (e) {
+      console.error('Error al limpiar sessionStorage:', e);
+    }
+    
+    // 3. Eliminar cookies relacionadas con la autenticación
+    try {
+      document.cookie.split(';').forEach(cookie => {
+        const [name] = cookie.trim().split('=');
+        if (name && (name.includes('supabase') || name.includes('auth'))) {
+          document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/;`;
+        }
+      });
+      console.log('Limpieza de cookies completada');
+    } catch (e) {
+      console.error('Error al limpiar cookies:', e);
+    }
+  };
+
   const handleLogout = async () => {
     try {
       // Prevenir múltiples clicks
       if (isLoggingOut) return;
       
       setIsLoggingOut(true);
+      setIsDropdownOpen(false); // Cerrar el menú desplegable inmediatamente
       
-      // Cerrar sesión en Supabase
-      const { error } = await supabase.auth.signOut();
+      // Iniciar limpieza agresiva incluso antes de la respuesta de Supabase
+      forceCleanupSession();
       
-      if (error) {
-        console.error("Error al cerrar sesión:", error);
-        throw error;
+      // Mostrar notificación de cierre de sesión
+      toast.success(t.loggingOut || 'Cerrando sesión...');
+      
+      // Cerrar sesión en Supabase con timeout para evitar bloqueos
+      const signOutPromise = supabase.auth.signOut();
+      
+      // Usar un timeout para no esperar indefinidamente
+      const timeoutPromise = new Promise((_, reject) => {
+        setTimeout(() => reject(new Error('Timeout al cerrar sesión')), 3000);
+      });
+      
+      // Intentar cerrar sesión con timeout
+      try {
+        const { error } = await Promise.race([signOutPromise, timeoutPromise]);
+        if (error) console.error("Error al cerrar sesión:", error);
+      } catch (e) {
+        console.warn("Timeout en signOut, continuando con cierre forzado:", e);
       }
       
-      // Limpiamos cualquier estado de la sesión en localStorage si es necesario
-      localStorage.removeItem('supabase.auth.token');
-      
-      // Usar router.push en lugar de window.location.href para navegación del lado del cliente
+      // Redirección inmediata, no esperamos a que se complete el cierre de sesión
       router.push('/login');
       
-      // Forzar recarga después de la redirección para asegurar que todos los estados se reinicien
+      // Forzar recarga completa después de un pequeño retraso para asegurar 
+      // que la navegación comience antes de la recarga
       setTimeout(() => {
-        window.location.reload();
-      }, 100);
+        console.log("Recargando página para completar cierre de sesión");
+        window.location.href = '/login';
+      }, 200);
       
     } catch (error) {
       console.error("Error durante el logout:", error);
+      // Intentar redirección incluso si hay error
+      window.location.href = '/login';
     } finally {
       setIsLoggingOut(false);
     }
@@ -217,7 +282,15 @@ const Header = () => {
                 className={`${styles.dropdownItem} ${styles.logoutItem}`}
                 disabled={isLoggingOut}
               >
-                {isLoggingOut ? 'Cerrando sesión...' : (t.logout || "Cerrar sesión")}
+                {isLoggingOut ? (
+                  <div className="flex items-center">
+                    <svg className="animate-spin -ml-1 mr-2 h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    <span>Cerrando...</span>
+                  </div>
+                ) : (t.logout || "Cerrar sesión")}
               </button>
             </div>
           )}
