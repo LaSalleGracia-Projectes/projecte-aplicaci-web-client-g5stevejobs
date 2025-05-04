@@ -1,11 +1,26 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { supabase } from "../../../supabaseClient";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useAuth } from "../../../context/AuthContext";
 import { toast } from "react-hot-toast";
+import { useLanguage } from "../../../context/LanguageContext";
+
+// Función para crear un timeout
+const createTimeout = (ms) => {
+  return new Promise((_, reject) => {
+    setTimeout(() => {
+      reject(new Error('Timeout: La solicitud tardó demasiado tiempo'));
+    }, ms);
+  });
+};
+
+// Constantes de configuración de reintentos
+const MAX_RETRIES = 3;
+const RETRY_DELAY = 2000; // 2 segundos entre reintentos
+const TIMEOUT_MS = 10000; // 10 segundos de timeout por intento
 
 export default function PostDetailClient({ slug }) {
   const router = useRouter();
@@ -16,21 +31,40 @@ export default function PostDetailClient({ slug }) {
   const [commenting, setCommenting] = useState(false);
   const [error, setError] = useState(null);
   const { user } = useAuth();
+  const { t } = useLanguage();
   const [showDeletePostModal, setShowDeletePostModal] = useState(false);
   const [commentToDelete, setCommentToDelete] = useState(null);
   const [showDeleteCommentModal, setShowDeleteCommentModal] = useState(false);
+  const [retryCount, setRetryCount] = useState(0);
+  const [isRetrying, setIsRetrying] = useState(false);
 
-  useEffect(() => {
+  // Función de delay para esperar entre reintentos
+  const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+
+  // Memoizamos fetchPostAndComments con useCallback para evitar recreaciones
+  const fetchPostAndComments = useCallback(async (retry = 0, manual = false) => {
     if (!slug) {
       setError('ID de publicación no válido');
       setLoading(false);
       return;
     }
 
-    const fetchPostAndComments = async () => {
-      try {
-        // Obtener la publicación con información del autor
-        const { data: postData, error: postError } = await supabase
+    try {
+      if (retry === 0 || manual) {
+        setLoading(true);
+      }
+      setError(null);
+      
+      if (retry > 0) {
+        setIsRetrying(true);
+        setRetryCount(retry);
+      }
+      
+      console.log(`Intentando cargar post y comentarios (intento ${retry + 1} de ${MAX_RETRIES + 1})`);
+      
+      // Obtener la publicación con información del autor con timeout
+      const postResult = await Promise.race([
+        supabase
           .from('publicacion')
           .select(`
             *,
@@ -40,13 +74,16 @@ export default function PostDetailClient({ slug }) {
             )
           `)
           .eq('id_publicacion', slug)
-          .single();
+          .single(),
+        createTimeout(TIMEOUT_MS)
+      ]);
 
-        if (postError) throw postError;
-        setPost(postData);
+      if (postResult.error) throw postResult.error;
+      setPost(postResult.data);
 
-        // Obtener los comentarios con información de los autores
-        const { data: commentsData, error: commentsError } = await supabase
+      // Obtener los comentarios con información de los autores con timeout
+      const commentsResult = await Promise.race([
+        supabase
           .from('comentario')
           .select(`
             *,
@@ -56,20 +93,54 @@ export default function PostDetailClient({ slug }) {
             )
           `)
           .eq('id_publicacion', slug)
-          .order('fecha_publicacion', { ascending: true });
+          .order('fecha_publicacion', { ascending: true }),
+        createTimeout(TIMEOUT_MS)
+      ]);
 
-        if (commentsError) throw commentsError;
-        setComments(commentsData || []);
-      } catch (err) {
-        console.error('Error:', err);
-        setError('Error al cargar la publicación');
-      } finally {
+      if (commentsResult.error) throw commentsResult.error;
+      setComments(commentsResult.data || []);
+      
+      // Restablecemos los estados de reintento
+      setIsRetrying(false);
+      setRetryCount(0);
+      
+    } catch (err) {
+      console.error(`Error fetching post details (intento ${retry + 1}):`, err);
+      
+      // Si aún podemos reintentar y no fue un reintento manual
+      if (retry < MAX_RETRIES && !manual) {
+        console.log(`Reintentando en ${RETRY_DELAY/1000} segundos...`);
+        // Esperamos antes de reintentar
+        await delay(RETRY_DELAY);
+        // Reintentamos con un contador incrementado
+        return fetchPostAndComments(retry + 1);
+      }
+      
+      // Si llegamos al máximo de reintentos o fue un reintento manual, mostramos el error
+      setIsRetrying(false);
+      setError(
+        err.message.includes('Timeout')
+          ? `La carga de la publicación está tardando demasiado. Se han realizado ${retry + 1} intentos. Por favor, inténtalo de nuevo más tarde.`
+          : `Error al cargar la publicación (${retry + 1}/${MAX_RETRIES + 1} intentos)`
+      );
+    } finally {
+      if (retry === 0 || manual || retry >= MAX_RETRIES) {
         setLoading(false);
       }
-    };
-
-    fetchPostAndComments();
+    }
   }, [slug]);
+
+  useEffect(() => {
+    const controller = new AbortController();
+    
+    fetchPostAndComments(0);
+    
+    // Cleanup function para gestionar el caso de unmount durante la carga
+    return () => {
+      controller.abort();
+      console.log("Componente PostDetailClient desmontado");
+    };
+  }, [fetchPostAndComments]);
 
   const handleSubmitComment = async (e) => {
     e.preventDefault();
@@ -78,28 +149,37 @@ export default function PostDetailClient({ slug }) {
       return;
     }
 
+    if (!newComment.trim()) {
+      toast.error(t?.emptyCommentError || 'El comentario no puede estar vacío');
+      return;
+    }
+
     setCommenting(true);
     try {
-      const { data, error } = await supabase
-        .from('comentario')
-        .insert([
-          {
-            contenido: newComment,
-            id_perfil: user.id,
-            id_publicacion: post.id_publicacion,
-            fecha_publicacion: new Date().toISOString()
-          }
-        ])
-        .select(`
-          *,
-          perfil!comentario_id_perfil_fkey (
-            usuario,
-            avatar
-          )
-        `)
-        .single();
+      // Usamos Promise.race para establecer un timeout
+      const result = await Promise.race([
+        supabase
+          .from('comentario')
+          .insert([
+            {
+              contenido: newComment,
+              id_perfil: user.id,
+              id_publicacion: post.id_publicacion,
+              fecha_publicacion: new Date().toISOString()
+            }
+          ])
+          .select(`
+            *,
+            perfil!comentario_id_perfil_fkey (
+              usuario,
+              avatar
+            )
+          `)
+          .single(),
+        createTimeout(TIMEOUT_MS)
+      ]);
 
-      if (error) throw error;
+      if (result.error) throw result.error;
 
       // Actualizar la fecha de última publicación del post
       await supabase
@@ -107,11 +187,16 @@ export default function PostDetailClient({ slug }) {
         .update({ ultima_publicacion: new Date().toISOString() })
         .eq('id_publicacion', post.id_publicacion);
 
-      setComments([...comments, data]);
+      setComments([...comments, result.data]);
       setNewComment("");
+      toast.success(t?.commentSuccess || 'Comentario publicado con éxito');
     } catch (err) {
-      console.error('Error:', err);
-      setError('Error al publicar el comentario');
+      console.error('Error al publicar comentario:', err);
+      toast.error(
+        err.message.includes('Timeout')
+          ? 'La publicación del comentario está tardando demasiado. Por favor, inténtalo de nuevo.'
+          : t?.commentError || 'Error al publicar el comentario'
+      );
     } finally {
       setCommenting(false);
     }
@@ -145,11 +230,11 @@ export default function PostDetailClient({ slug }) {
 
       if (postError) throw postError;
 
-      toast.success('Post eliminado correctamente');
+      toast.success(t?.postDeleteSuccess || 'Post eliminado correctamente');
       router.push('/foro');
     } catch (error) {
       console.error('Error al eliminar el post:', error);
-      toast.error('Error al eliminar el post');
+      toast.error(t?.postDeleteError || 'Error al eliminar el post');
     }
     setShowDeletePostModal(false);
   };
@@ -166,10 +251,10 @@ export default function PostDetailClient({ slug }) {
       if (error) throw error;
 
       setComments(comments.filter(c => c.id_comentario !== commentToDelete.id_comentario));
-      toast.success('Comentario eliminado correctamente');
+      toast.success(t?.commentDeleteSuccess || 'Comentario eliminado correctamente');
     } catch (error) {
       console.error('Error al eliminar el comentario:', error);
-      toast.error('Error al eliminar el comentario');
+      toast.error(t?.commentDeleteError || 'Error al eliminar el comentario');
     }
     setShowDeleteCommentModal(false);
     setCommentToDelete(null);
@@ -179,7 +264,17 @@ export default function PostDetailClient({ slug }) {
     return (
       <div className="min-h-screen bg-gray-850 p-4">
         <div className="max-w-4xl mx-auto">
-          <p className="text-white">Cargando publicación...</p>
+          <div className="flex flex-col items-center justify-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500 mb-4"></div>
+            {isRetrying ? (
+              <div className="text-center">
+                <p className="text-white mb-2">{t?.retrying || "Reintentando cargar publicación..."}</p>
+                <p className="text-yellow-400 text-sm">Intento {retryCount + 1} de {MAX_RETRIES + 1}</p>
+              </div>
+            ) : (
+              <p className="text-white">{t?.loadingPost || "Cargando publicación..."}</p>
+            )}
+          </div>
         </div>
       </div>
     );
@@ -190,15 +285,21 @@ export default function PostDetailClient({ slug }) {
       <div className="min-h-screen bg-gray-850 p-4">
         <div className="max-w-4xl mx-auto">
           <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative">
-            <strong className="font-bold">Error: </strong>
-            <span className="block sm:inline">{error || 'Publicación no encontrada'}</span>
+            <strong className="font-bold">{t?.error || "Error"}: </strong>
+            <span className="block sm:inline">{error || t?.postNotFound || 'Publicación no encontrada'}</span>
+            <button 
+              onClick={() => fetchPostAndComments(0, true)} 
+              className="mt-4 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-500"
+            >
+              {t?.tryAgain || "Intentar nuevamente"}
+            </button>
           </div>
           <div className="mt-4">
             <button
               onClick={() => router.push('/foro')}
               className="text-blue-400 hover:text-blue-500"
             >
-              ← Volver al foro
+              ← {t?.backToForum || "Volver al foro"}
             </button>
           </div>
         </div>

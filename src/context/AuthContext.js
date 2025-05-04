@@ -135,6 +135,7 @@ export const AuthProvider = ({ children }) => {
             }
           }
         } else {
+          // Cuando no hay sesión de usuario (logout o sesión expirada)
           setUser(null);
           setPerfil(null);
           setIsBanned(false);
@@ -145,7 +146,14 @@ export const AuthProvider = ({ children }) => {
         setLoading(false);
 
         if (event === 'SIGNED_OUT') {
-          router.push('/login');
+          // Forzar limpieza de datos de sesión locales al desconectar
+          localStorage.removeItem('supabase.auth.token');
+          sessionStorage.removeItem('returnUrl');
+          
+          // Usar setTimeout para permitir que el estado se actualice antes de la redirección
+          setTimeout(() => {
+            router.push('/login');
+          }, 50);
         } else if (event === 'SIGNED_IN') {
           const returnUrl = sessionStorage.getItem('returnUrl');
           if (returnUrl) {

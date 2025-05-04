@@ -7,6 +7,15 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useAuth } from "../../context/AuthContext";
 import { useLanguage } from "../../context/LanguageContext";
 
+// Función para crear un timeout que rechace el Promise después de un tiempo
+const createTimeout = (ms) => {
+  return new Promise((_, reject) => {
+    setTimeout(() => {
+      reject(new Error('Timeout: La solicitud tardó demasiado tiempo'));
+    }, ms);
+  });
+};
+
 const Login = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -17,6 +26,8 @@ const Login = () => {
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
   const [banInfo, setBanInfo] = useState(null);
+  const [authSuccess, setAuthSuccess] = useState(false); // Para rastrear cuando la autenticación fue exitosa
+  const [redirected, setRedirected] = useState(false); // Para evitar redirecciones múltiples
 
   useEffect(() => {
     // Verificar si hay información de ban en los parámetros de la URL
@@ -31,52 +42,91 @@ const Login = () => {
         expiration: new Date(expiration)
       });
     }
-  }, [searchParams]);
+    
+    // Si el usuario ya está autenticado, redirigir a la página de inicio
+    if (user && !loading && !authSuccess && !redirected) {
+      console.log('Usuario ya autenticado, redirigiendo a home');
+      setRedirected(true); // Marcar como redirigido para evitar bucles
+      router.push('/');
+    }
+  }, [searchParams, user, loading, authSuccess, router, redirected]);
 
   const handleLogin = async (e) => {
     e.preventDefault();
     setError(null);
     setLoading(true);
+    setAuthSuccess(false);
+    setRedirected(false);
 
     try {
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      });
+      // Usar Promise.race para establecer un timeout en la autenticación
+      const authResult = await Promise.race([
+        supabase.auth.signInWithPassword({
+          email,
+          password,
+        }),
+        createTimeout(15000) // 15 segundos timeout
+      ]);
 
-      if (error) throw error;
+      if (authResult.error) throw authResult.error;
 
       // Verificar si el usuario está baneado
-      if (data?.user) {
-        const { data: profile } = await supabase
-          .from('perfil')
-          .select('ban_expiration, ban_reason')
-          .eq('id_perfil', data.user.id)
-          .single();
+      if (authResult.data?.user) {
+        try {
+          // Timeout para la verificación de ban
+          const banCheckResult = await Promise.race([
+            supabase
+              .from('perfil')
+              .select('ban_expiration, ban_reason')
+              .eq('id_perfil', authResult.data.user.id)
+              .single(),
+            createTimeout(8000) // 8 segundos timeout
+          ]);
 
-        if (profile?.ban_expiration) {
-          const expirationDate = new Date(profile.ban_expiration);
-          const now = new Date();
-          
-          if (expirationDate > now) {
-            await supabase.auth.signOut();
-            setBanInfo({
-              reason: profile.ban_reason || t.noReasonProvided || 'No se proporcionó razón',
-              expiration: expirationDate
-            });
-            setError(t.accountBanned || 'Tu cuenta está baneada');
-            setLoading(false);
-            return;
+          if (banCheckResult.error) {
+            console.error('Error al verificar ban:', banCheckResult.error);
+            // Continuamos de todas formas ya que es mejor permitir el acceso que bloquear por error
+          } else if (banCheckResult.data?.ban_expiration) {
+            const expirationDate = new Date(banCheckResult.data.ban_expiration);
+            const now = new Date();
+            
+            if (expirationDate > now) {
+              await supabase.auth.signOut();
+              setBanInfo({
+                reason: banCheckResult.data.ban_reason || t.noReasonProvided || 'No se proporcionó razón',
+                expiration: expirationDate
+              });
+              setError(t.accountBanned || 'Tu cuenta está baneada');
+              setLoading(false);
+              return;
+            }
           }
+        } catch (banCheckError) {
+          console.error('Error durante la verificación de ban:', banCheckError);
+          // Continuamos de todas formas
         }
         
         // Si llegamos aquí, el usuario no está baneado y la autenticación fue exitosa
         console.log('Login exitoso, redirigiendo a home');
-        router.push('/');
+        setAuthSuccess(true);
+        setRedirected(true);
+        
+        // Redirigimos después de un breve retraso para asegurar que todo se complete
+        setTimeout(() => {
+          router.push('/');
+        }, 200);
       }
     } catch (error) {
       console.error('Error en login:', error);
-      setError(error.message);
+      
+      if (error.message.includes('Timeout')) {
+        setError('La conexión está tardando demasiado. Por favor, inténtalo nuevamente.');
+      } else if (error.message.includes('Invalid login credentials')) {
+        setError(t.invalidCredentials || 'Email o contraseña incorrectos');
+      } else {
+        setError(error.message);
+      }
+    } finally {
       setLoading(false);
     }
   };
@@ -144,6 +194,7 @@ const Login = () => {
               onChange={(e) => setEmail(e.target.value)}
               className="w-full border border-gray-600 rounded p-2 bg-gray-700 text-gray-100"
               required
+              disabled={loading}
             />
           </div>
           <div>
@@ -154,6 +205,7 @@ const Login = () => {
               onChange={(e) => setPassword(e.target.value)}
               className="w-full border border-gray-600 rounded p-2 bg-gray-700 text-gray-100"
               required
+              disabled={loading}
             />
           </div>
           
@@ -165,10 +217,21 @@ const Login = () => {
           )}
           
           <button 
-            className="w-full bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-500 disabled:opacity-50"
+            className="w-full bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-500 disabled:opacity-50 flex justify-center items-center"
             disabled={loading || isBanned}
+            type="submit"
           >
-            {loading ? (t.loggingIn || "Iniciando sesión...") : (t.login || "Iniciar Sesión")}
+            {loading ? (
+              <>
+                <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                <span>{t.loggingIn || "Iniciando sesión..."}</span>
+              </>
+            ) : (
+              t.login || "Iniciar Sesión"
+            )}
           </button>
         </form>
       </div>

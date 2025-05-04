@@ -22,6 +22,8 @@ const Header = () => {
   
   // Estado para almacenar la URL de la imagen de perfil
   const [profileImage, setProfileImage] = useState(null);
+  // Estado para controlar si se está procesando el cierre de sesión
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
 
   // Obtener la imagen de perfil desde Supabase
   useEffect(() => {
@@ -59,9 +61,36 @@ const Header = () => {
   }, [user]);
 
   const handleLogout = async () => {
-    await supabase.auth.signOut();
-    // Redirigir al usuario a la página de inicio de sesión o a otra página
-    window.location.href = '/login';
+    try {
+      // Prevenir múltiples clicks
+      if (isLoggingOut) return;
+      
+      setIsLoggingOut(true);
+      
+      // Cerrar sesión en Supabase
+      const { error } = await supabase.auth.signOut();
+      
+      if (error) {
+        console.error("Error al cerrar sesión:", error);
+        throw error;
+      }
+      
+      // Limpiamos cualquier estado de la sesión en localStorage si es necesario
+      localStorage.removeItem('supabase.auth.token');
+      
+      // Usar router.push en lugar de window.location.href para navegación del lado del cliente
+      router.push('/login');
+      
+      // Forzar recarga después de la redirección para asegurar que todos los estados se reinicien
+      setTimeout(() => {
+        window.location.reload();
+      }, 100);
+      
+    } catch (error) {
+      console.error("Error durante el logout:", error);
+    } finally {
+      setIsLoggingOut(false);
+    }
   };
 
   const handleSearch = (e) => {
@@ -183,7 +212,13 @@ const Header = () => {
           {isDropdownOpen && (
             <div className={styles.dropdownMenu}>
               <Link href="/perfil" className={styles.dropdownItem}>{t.myProfile || "Mi perfil"}</Link>
-              <button onClick={handleLogout} className={`${styles.dropdownItem} ${styles.logoutItem}`}>{t.logout || "Cerrar sesión"}</button>
+              <button 
+                onClick={handleLogout} 
+                className={`${styles.dropdownItem} ${styles.logoutItem}`}
+                disabled={isLoggingOut}
+              >
+                {isLoggingOut ? 'Cerrando sesión...' : (t.logout || "Cerrar sesión")}
+              </button>
             </div>
           )}
         </div>
