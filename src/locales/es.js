@@ -149,10 +149,10 @@ export const es = {
   gameInfo: "Información del juego",
   
   // About Us page
-  aboutUsDescription: "Somos un equipo de desarrolladores apasionados por los juegos de aventura y terror. The Abyss es nuestro proyecto insignia, creado con amor y dedicación.",
-  aboutUsText1: "The Abyss es un juego de aventura y terror desarrollado por un pequeño equipo de estudiantes apasionados por crear experiencias inmersivas y aterradoras.",
-  aboutUsText2: "Nos inspiramos en clásicos del género como Silent Hill y Resident Evil, pero aportamos nuestro propio estilo y narrativa única que seguramente te mantendrá al borde de tu asiento.",
-  aboutUsText3: "Nuestro objetivo es crear experiencias de juego memorables que desafíen tu percepción y te sumerjan en un mundo de misterio y terror. ¡Esperamos que disfrutes de The Abyss!",
+  aboutUsDescription: "Somos un equipo de estudiantes apasionados por el desarrollo de videojuegos y el arte digital, unidos por nuestro amor hacia el universo de Made in Abyss.",
+  aboutUsText1: "Nuestro equipo está formado por Iván, Fan y Adrián, tres estudiantes de La Salle Campus Barcelona con diferentes habilidades pero una visión compartida: crear experiencias inmersivas que capturen la esencia de mundos fantásticos. Nuestra pasión por la narrativa de 'Made in Abyss' nos inspiró a desarrollar un juego de plataformas que rinde homenaje a su misterioso y cautivador universo.",
+  aboutUsText2: "En nuestro juego, exploramos los misterios de un abismo vertical lleno de criaturas fascinantes, reliquias olvidadas y paisajes impresionantes. Cada nivel está diseñado para evocar la sensación de descubrimiento y peligro que caracteriza la obra original, desafiando a los jugadores a adentrarse más profundamente mientras enfrentan los crecientes riesgos del descenso.",
+  aboutUsText3: "Este proyecto representa no solo nuestra dedicación al desarrollo de videojuegos, sino también nuestro compromiso con la creación de experiencias que resuenen emocionalmente con los jugadores. A través de mecánicas de juego cuidadosamente diseñadas, una estética visual cautivadora y una banda sonora atmosférica, invitamos a los jugadores a sumergirse en un mundo donde la curiosidad y la aventura van de la mano con el misterio y el peligro.",
   
   // Forum page
   errorLoadingPosts: "Error al cargar las publicaciones. Por favor, inténtalo de nuevo más tarde.",
@@ -169,4 +169,18 @@ export const es = {
   subjectPlaceholder: "Asunto de tu mensaje",
   descriptionPlaceholder: "Describe tu consulta, problema o sugerencia...",
   sending: "Enviando...",
+  
+  // Weather widget
+  currentWeather: "Clima en Barcelona",
+  feelsLike: "Sensación",
+  humidity: "Humedad",
+  wind: "Viento",
+  precipitation: "Precipitación",
+  
+  // Daily quote
+  dailyQuote: "Frase del Día",
+  
+  // Location
+  ourOffice: "Nuestra Oficina",
+  officeLocation: "La Salle Campus Barcelona, Carrer de Sant Joan de La Salle, 42, 08022 Barcelona",
 }; 

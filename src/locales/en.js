@@ -149,10 +149,10 @@ export const en = {
   gameInfo: "Game information",
   
   // About Us page
-  aboutUsDescription: "We are a team of developers passionate about adventure and horror games. The Abyss is our flagship project, created with love and dedication.",
-  aboutUsText1: "The Abyss is an adventure and horror game developed by a small team of students passionate about creating immersive and terrifying experiences.",
-  aboutUsText2: "We are inspired by classics of the genre such as Silent Hill and Resident Evil, but we bring our own style and unique narrative that will surely keep you on the edge of your seat.",
-  aboutUsText3: "Our goal is to create memorable gaming experiences that challenge your perception and immerse you in a world of mystery and terror. We hope you enjoy The Abyss!",
+  aboutUsDescription: "We are a team of students passionate about video game development and digital art, united by our love for the Made in Abyss universe.",
+  aboutUsText1: "Our team consists of Iván, Fan, and Adrián, three students from La Salle Campus Barcelona with different skills but a shared vision: to create immersive experiences that capture the essence of fantastic worlds. Our passion for the 'Made in Abyss' narrative inspired us to develop a platform game that pays homage to its mysterious and captivating universe.",
+  aboutUsText2: "In our game, we explore the mysteries of a vertical abyss filled with fascinating creatures, forgotten relics, and breathtaking landscapes. Each level is designed to evoke the sense of discovery and danger that characterizes the original work, challenging players to venture deeper while facing the increasing risks of descent.",
+  aboutUsText3: "This project represents not only our dedication to video game development but also our commitment to creating experiences that resonate emotionally with players. Through carefully designed game mechanics, captivating visual aesthetics, and an atmospheric soundtrack, we invite players to immerse themselves in a world where curiosity and adventure go hand in hand with mystery and danger.",
   
   // Forum page
   errorLoadingPosts: "Error loading posts. Please try again later.",
@@ -169,5 +169,18 @@ export const en = {
   subjectPlaceholder: "Subject of your message",
   descriptionPlaceholder: "Describe your question, problem or suggestion...",
   sending: "Sending...",
-  description: "Description"
+  
+  // Weather widget
+  currentWeather: "Weather in Barcelona",
+  feelsLike: "Feels like",
+  humidity: "Humidity",
+  wind: "Wind",
+  precipitation: "Precipitation",
+  
+  // Daily quote
+  dailyQuote: "Quote of the Day",
+  
+  // Location
+  ourOffice: "Our Office",
+  officeLocation: "La Salle Campus Barcelona, Carrer de Sant Joan de La Salle, 42, 08022 Barcelona"
 }; 
