@@ -1,25 +1,17 @@
 'use client';
 
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState } from 'react';
 import { supabase } from '../../supabaseClient';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '../../context/AuthContext';
 import { useLanguage } from '../../context/LanguageContext';
+import { toast } from 'react-hot-toast';
 
-// Función para crear un timeout que resuelva un Promise después de un tiempo
-const createTimeout = (ms) => {
-  return new Promise((_, reject) => {
-    setTimeout(() => {
-      reject(new Error('Timeout: La solicitud tardó demasiado tiempo'));
-    }, ms);
-  });
-};
-
-// Constantes de configuración de reintentos
-const MAX_RETRIES = 3;
-const RETRY_DELAY = 2000; // 2 segundos entre reintentos
-const TIMEOUT_MS = 10000; // 10 segundos de timeout por intento
+// Función simple para timeout
+const createTimeout = (ms) => new Promise((_, reject) => 
+  setTimeout(() => reject(new Error('Timeout')), ms)
+);
 
 export default function PostListClient() {
   const [posts, setPosts] = useState([]);
@@ -27,91 +19,58 @@ export default function PostListClient() {
   const [error, setError] = useState(null);
   const [newPostTitle, setNewPostTitle] = useState('');
   const [newPostContent, setNewPostContent] = useState('');
-  const [retryCount, setRetryCount] = useState(0);
-  const [isRetrying, setIsRetrying] = useState(false);
   const router = useRouter();
   const { user } = useAuth();
   const { t, currentLanguage } = useLanguage();
 
-  // Función de delay para esperar entre reintentos
-  const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
-
-  // Memoizamos fetchPosts con useCallback para evitar recreaciones innecesarias
-  const fetchPosts = useCallback(async (retry = 0, manual = false) => {
+  // Función para cargar los posts
+  const loadPosts = async () => {
+    setLoading(true);
+    setError(null);
+    
     try {
-      if (retry === 0 || manual) {
-        setLoading(true);
-      }
-      setError(null);
-      
-      if (retry > 0) {
-        setIsRetrying(true);
-        setRetryCount(retry);
-      }
-      
-      console.log(`Intentando cargar posts (intento ${retry + 1} de ${MAX_RETRIES + 1})`);
-      
-      // Usamos Promise.race para establecer un timeout
+      // Intentar cargar los posts con un timeout de 10 segundos
+      const postsPromise = supabase
+        .from('publicacion')
+        .select(`
+          *,
+          perfil!publicacion_id_perfil_fkey (
+            usuario,
+            avatar
+          )
+        `)
+        .order('fecha_publicacion', { ascending: false });
+        
       const result = await Promise.race([
-        supabase
-          .from('publicacion')
-          .select(`
-            *,
-            perfil!publicacion_id_perfil_fkey (
-              usuario,
-              avatar
-            )
-          `)
-          .order('fecha_publicacion', { ascending: false }),
-        createTimeout(TIMEOUT_MS) // timeout configurable
+        postsPromise,
+        createTimeout(10000)
       ]);
-
-      // Si llegamos aquí, la promesa de supabase se resolvió antes que el timeout
-      const { data, error } = result;
-
-      if (error) throw error;
       
-      console.log("Posts cargados correctamente:", data?.length || 0);
-      setPosts(data || []);
-      setIsRetrying(false);
-      setRetryCount(0);
-    } catch (error) {
-      console.error(`Error fetching posts (intento ${retry + 1}):`, error);
+      if (result.error) throw new Error('Error al cargar las publicaciones');
       
-      // Si aún podemos reintentar y no fue un reintento manual
-      if (retry < MAX_RETRIES && !manual) {
-        console.log(`Reintentando en ${RETRY_DELAY/1000} segundos...`);
-        // Esperamos antes de reintentar
-        await delay(RETRY_DELAY);
-        // Reintentamos con un contador incrementado
-        return fetchPosts(retry + 1);
-      }
+      console.log("Posts cargados correctamente:", result.data?.length || 0);
+      setPosts(result.data || []);
       
-      // Si llegamos al máximo de reintentos o fue un reintento manual, mostramos el error
-      setIsRetrying(false);
+    } catch (err) {
+      console.error('Error al cargar posts:', err);
       setError(
-        error.message.includes('Timeout')
-          ? `La carga de publicaciones está tardando demasiado. Se han realizado ${retry + 1} intentos. Por favor, inténtalo de nuevo más tarde.`
-          : `${t.errorLoadingPosts || 'Error al cargar las publicaciones'} (${retry + 1}/${MAX_RETRIES + 1} intentos)`
+        err.message === 'Timeout'
+          ? 'La carga de publicaciones está tardando demasiado. Por favor, inténtalo de nuevo.'
+          : 'Error al cargar las publicaciones'
       );
     } finally {
-      if (retry === 0 || manual || retry >= MAX_RETRIES) {
-        setLoading(false);
-      }
+      setLoading(false);
     }
-  }, [t]);
+  };
 
+  // Efecto para cargar los posts al montar el componente
   useEffect(() => {
-    const controller = new AbortController();
+    loadPosts();
     
-    fetchPosts(0);
-    
-    // Cleanup function para gestionar el caso de unmount durante la carga
     return () => {
-      controller.abort();
       console.log("Componente PostListClient desmontado");
     };
-  }, [fetchPosts]);
+  }, []);
 
   const handleCreatePost = async (e) => {
     e.preventDefault();
@@ -145,7 +104,7 @@ export default function PostListClient() {
 
       setNewPostTitle('');
       setNewPostContent('');
-      fetchPosts(0);
+      loadPosts();
       router.push(`/foro/${slug}`);
     } catch (error) {
       console.error('Error creating post:', error);
@@ -165,6 +124,12 @@ export default function PostListClient() {
       day: 'numeric',
     });
   };
+  
+  // Función para refrescar los posts
+  const handleRefresh = () => {
+    loadPosts();
+    toast.success(t.refreshing || "Actualizando el foro...");
+  };
 
   if (loading) {
     return (
@@ -172,14 +137,14 @@ export default function PostListClient() {
         <div className="max-w-4xl mx-auto">
           <div className="flex flex-col items-center justify-center">
             <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500 mb-4"></div>
-            {isRetrying ? (
-              <div className="text-center">
-                <p className="text-white mb-2">{t.retrying || "Reintentando cargar publicaciones..."}</p>
-                <p className="text-yellow-400 text-sm">Intento {retryCount + 1} de {MAX_RETRIES + 1}</p>
-              </div>
-            ) : (
-              <p className="text-white">{t.loading || "Cargando publicaciones..."}</p>
-            )}
+            <p className="text-white">{t.loading || "Cargando publicaciones..."}</p>
+            
+            <button 
+              onClick={() => window.location.reload()} 
+              className="mt-6 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-500"
+            >
+              {t.manualReload || "Recargar manualmente"}
+            </button>
           </div>
         </div>
       </div>
@@ -193,12 +158,20 @@ export default function PostListClient() {
           <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative">
             <strong className="font-bold">{t.error || "Error"}: </strong>
             <span className="block sm:inline">{error}</span>
-            <button 
-              onClick={() => fetchPosts(0, true)} 
-              className="mt-4 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-500"
-            >
-              {t.tryAgain || "Intentar nuevamente"}
-            </button>
+            <div className="flex space-x-4 mt-4">
+              <button 
+                onClick={loadPosts} 
+                className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-500"
+              >
+                {t.tryAgain || "Intentar nuevamente"}
+              </button>
+              <button 
+                onClick={() => window.location.reload()} 
+                className="bg-gray-600 text-white px-4 py-2 rounded hover:bg-gray-500"
+              >
+                {t.reload || "Recargar página"}
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -229,7 +202,7 @@ export default function PostListClient() {
               </>
             )}
             <button
-              onClick={() => fetchPosts(0, true)}
+              onClick={handleRefresh}
               className="bg-gray-600 text-white px-4 py-2 rounded hover:bg-gray-500"
               title={t.refresh || "Actualizar"}
             >
@@ -276,4 +249,4 @@ export default function PostListClient() {
       </div>
     </div>
   );
-} 
+}
