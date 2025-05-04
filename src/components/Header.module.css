@@ -159,6 +159,48 @@
     margin-left: 1rem;
     flex-shrink: 0;
   }
+
+  /* Contenedor para el trigger del menú de usuario */
+  .userMenuTrigger {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+  }
+  
+  /* Estilos para el contenedor de la imagen de perfil */
+  .profileImageContainer {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    overflow: hidden;
+    margin-right: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid #007BFF;
+    box-sizing: border-box;
+    background-color: #333;
+  }
+  
+  /* Estilos para la imagen de perfil */
+  .profileImage {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  
+  /* Estilos para el placeholder de la imagen de perfil */
+  .profileImagePlaceholder {
+    width: 100%;
+    height: 100%;
+    background-color: #555;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    font-weight: bold;
+  }
   
   .dropdownMenu {
     position: absolute;
@@ -346,6 +388,10 @@
       width: 100%;
       text-align: center;
       margin: 1rem 0;
+    }
+
+    .userMenuTrigger {
+      justify-content: center;
     }
 
     .loginButton {

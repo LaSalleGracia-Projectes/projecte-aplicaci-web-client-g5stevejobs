@@ -178,7 +178,7 @@ export const ca = {
   precipitation: "Precipitació",
   
   // Daily quote
-  dailyQuote: "Frase del Dia",
+  randomQuote: "Frase Aleatòria",
   
   // Location
   ourOffice: "La Nostra Oficina",

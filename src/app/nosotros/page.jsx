@@ -48,9 +48,9 @@ const NosotrosPage = () => {
           <WeatherWidget />
         </section>
 
-        {/* Daily Quote Section - TERCERO */}
+        {/* Random Quote Section - TERCERO */}
         <section className="bg-gray-800 p-6 rounded-lg shadow-md mb-8">
-          <h2 className="text-2xl font-bold mb-4">{t.dailyQuote || "Frase del Día"}</h2>
+          <h2 className="text-2xl font-bold mb-4">{t.randomQuote || "Frase Random"}</h2>
           <DailyQuote />
         </section>
       </main>

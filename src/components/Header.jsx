@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
@@ -19,6 +19,44 @@ const Header = () => {
   const [isLanguageDropdownOpen, setIsLanguageDropdownOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  
+  // Estado para almacenar la URL de la imagen de perfil
+  const [profileImage, setProfileImage] = useState(null);
+
+  // Obtener la imagen de perfil desde Supabase
+  useEffect(() => {
+    const fetchProfileImage = async () => {
+      if (!user) return;
+
+      try {
+        console.log("Fetching profile for user:", user.email);
+        
+        // Consultar la tabla de perfiles para obtener el avatar usando el email
+        // Ya que la tabla no tiene un campo id_usuario
+        const { data, error } = await supabase
+          .from('perfil')
+          .select('avatar')
+          .eq('email', user.email)
+          .single();
+
+        if (error) {
+          console.error('Error en la consulta a la tabla perfil:', error.message || error);
+          return;
+        }
+
+        if (data && data.avatar) {
+          console.log('Avatar encontrado:', data.avatar);
+          setProfileImage(data.avatar);
+        } else {
+          console.log('No se encontró avatar para el usuario con email:', user.email);
+        }
+      } catch (error) {
+        console.error('Error inesperado al obtener la imagen de perfil:', error);
+      }
+    };
+
+    fetchProfileImage();
+  }, [user]);
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
@@ -126,10 +164,25 @@ const Header = () => {
 
       {user ? (
         <div className={styles.userMenu} onMouseEnter={() => setIsDropdownOpen(true)} onMouseLeave={() => setIsDropdownOpen(false)}>
-          <span className={styles.navItem}>{usuario}</span>
+          <div className={styles.userMenuTrigger}>
+            <div className={styles.profileImageContainer}>
+              {profileImage ? (
+                <img 
+                  src={profileImage} 
+                  alt="Profile" 
+                  className={styles.profileImage}
+                />
+              ) : (
+                <div className={styles.profileImagePlaceholder}>
+                  {usuario ? usuario.charAt(0).toUpperCase() : "U"}
+                </div>
+              )}
+            </div>
+            <span className={styles.navItem}>{usuario}</span>
+          </div>
           {isDropdownOpen && (
             <div className={styles.dropdownMenu}>
-              <Link href={`/perfil/${usuario}`} className={styles.dropdownItem}>{t.myProfile || "Mi perfil"}</Link>
+              <Link href="/perfil" className={styles.dropdownItem}>{t.myProfile || "Mi perfil"}</Link>
               <button onClick={handleLogout} className={`${styles.dropdownItem} ${styles.logoutItem}`}>{t.logout || "Cerrar sesión"}</button>
             </div>
           )}

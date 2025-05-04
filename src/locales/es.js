@@ -178,7 +178,7 @@ export const es = {
   precipitation: "Precipitación",
   
   // Daily quote
-  dailyQuote: "Frase del Día",
+  randomQuote: "Frase Random",
   
   // Location
   ourOffice: "Nuestra Oficina",
