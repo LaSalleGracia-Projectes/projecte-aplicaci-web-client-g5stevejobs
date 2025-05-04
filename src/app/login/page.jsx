@@ -158,84 +158,138 @@ const Login = () => {
     });
   };
 
+  // Handle forgot password
+  const handleForgotPassword = () => {
+    router.push('/reset-password');
+  };
+
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-850">
-      <div className="bg-gray-800 p-8 rounded shadow-lg w-full max-w-md">
-        <h1 className="text-2xl font-bold mb-4 text-center text-gray-100">{t.login || "Iniciar Sesión"}</h1>
-        
-        <p className="text-center mb-4 text-gray-300">
-          {t.noAccount || "¿No tienes una cuenta?"}{" "}
-          <Link href="/signup" className="text-blue-500">
-            {t.signUp || "¡Regístrate!"}
-          </Link>
-        </p>
-        
-        {(banInfo || isBanned) && (
-          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4">
-            <strong className="font-bold">{t.accountBanned || "¡Cuenta baneada!"}</strong>
-            <span className="block sm:inline">
-              {banInfo?.reason || banReason}
-            </span>
-            <span className="block sm:inline mt-2">
-              {t.timeLeft || "Tiempo restante"}: {formatTimeLeft(banInfo?.expiration || banExpiration)}
-            </span>
-            <span className="block sm:inline mt-2">
-              {t.unbanDate || "Fecha de desbaneo"}: {formatExpirationDate(banInfo?.expiration || banExpiration)}
-            </span>
-          </div>
-        )}
-        
-        <form onSubmit={handleLogin} className="space-y-4">
-          <div>
-            <label className="block mb-2 text-gray-300">{t.email || "Email"}:</label>
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="w-full border border-gray-600 rounded p-2 bg-gray-700 text-gray-100"
-              required
-              disabled={loading}
-            />
-          </div>
-          <div>
-            <label className="block mb-2 text-gray-300">{t.password || "Contraseña"}:</label>
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full border border-gray-600 rounded p-2 bg-gray-700 text-gray-100"
-              required
-              disabled={loading}
-            />
+    <main className="min-h-screen bg-gray-850 text-white py-12">
+      <div className="max-w-xl mx-auto px-4">
+        <div className="bg-gradient-to-br from-gray-800 to-gray-850 rounded-2xl p-8 md:p-10 shadow-xl border border-gray-700">
+          <div className="mb-8 text-center">
+            <h1 className="text-3xl md:text-4xl font-bold text-white mb-3">{t.login || "Iniciar Sesión"}</h1>
+            <p className="text-blue-200 text-lg">
+              {t.welcomeBack || "Bienvenido de nuevo a nuestra comunidad"}
+            </p>
           </div>
           
-          {error && (
-            <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4">
-              <strong className="font-bold">{t.error || "Error"}: </strong>
-              <span className="block sm:inline">{error}</span>
+          {(banInfo || isBanned) && (
+            <div className="bg-red-900/20 border border-red-600 text-red-200 px-6 py-4 rounded-lg mb-6">
+              <div className="flex items-center mb-2">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-red-500 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                </svg>
+                <strong className="font-semibold text-red-300">{t.accountBanned || "¡Cuenta baneada!"}</strong>
+              </div>
+              <div className="ml-8">
+                <p className="mb-2">{banInfo?.reason || banReason}</p>
+                <p className="text-sm text-red-300">
+                  <span className="block">{t.timeLeft || "Tiempo restante"}: {formatTimeLeft(banInfo?.expiration || banExpiration)}</span>
+                  <span className="block mt-1">{t.unbanDate || "Fecha de desbaneo"}: {formatExpirationDate(banInfo?.expiration || banExpiration)}</span>
+                </p>
+              </div>
             </div>
           )}
           
-          <button 
-            className="w-full bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-500 disabled:opacity-50 flex justify-center items-center"
-            disabled={loading || isBanned}
-            type="submit"
-          >
-            {loading ? (
-              <>
-                <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                </svg>
-                <span>{t.loggingIn || "Iniciando sesión..."}</span>
-              </>
-            ) : (
-              t.login || "Iniciar Sesión"
-            )}
-          </button>
-        </form>
+          {error && !banInfo && !isBanned && (
+            <div className="bg-red-900/20 border border-red-600 text-red-200 px-4 py-3 rounded-lg mb-6 flex items-center">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+              </svg>
+              <span>{error}</span>
+            </div>
+          )}
+          
+          <form onSubmit={handleLogin} className="space-y-5">
+            <div>
+              <label className="block text-sm font-medium text-gray-300 mb-1" htmlFor="email">
+                {t.email || "Email"}:
+              </label>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                  </svg>
+                </div>
+                <input
+                  id="email"
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="pl-10 w-full border border-gray-600 rounded-lg p-3 bg-gray-700 text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                  required
+                  disabled={loading || isBanned}
+                />
+              </div>
+            </div>
+            
+            <div>
+              <div className="flex justify-between items-center mb-1">
+                <label className="block text-sm font-medium text-gray-300" htmlFor="password">
+                  {t.password || "Contraseña"}:
+                </label>
+                <Link href="/reset-password" className="text-sm text-blue-400 hover:text-blue-300">
+                  {t.forgotPassword || "¿Olvidaste tu contraseña?"}
+                </Link>
+              </div>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                  </svg>
+                </div>
+                <input
+                  id="password"
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="pl-10 w-full border border-gray-600 rounded-lg p-3 bg-gray-700 text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                  required
+                  disabled={loading || isBanned}
+                />
+              </div>
+            </div>
+            
+            <div className="pt-4">
+              <button 
+                type="submit"
+                className={`w-full bg-blue-600 text-white py-3 px-4 rounded-lg hover:bg-blue-500 transition-all duration-300 shadow-lg hover:scale-[1.02] flex items-center justify-center gap-2 ${
+                  (loading || isBanned) ? "opacity-70 cursor-not-allowed" : "hover:shadow-lg hover:shadow-blue-600/20"
+                }`}
+                disabled={loading || isBanned}
+              >
+                {loading ? (
+                  <>
+                    <svg className="animate-spin -ml-1 mr-2 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    <span>{t.loggingIn || "Iniciando sesión..."}</span>
+                  </>
+                ) : (
+                  <>
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
+                    </svg>
+                    {t.login || "Iniciar Sesión"}
+                  </>
+                )}
+              </button>
+            </div>
+          </form>
+          
+          <div className="mt-8 text-center border-t border-gray-700 pt-6">
+            <p className="text-gray-300">
+              {t.noAccount || "¿No tienes una cuenta?"}{" "}
+              <Link href="/signup" className="text-blue-400 hover:text-blue-300 font-medium">
+                {t.signUp || "Regístrate ahora"}
+              </Link>
+            </p>
+          </div>
+        </div>
       </div>
-    </div>
+    </main>
   );
 };
 
