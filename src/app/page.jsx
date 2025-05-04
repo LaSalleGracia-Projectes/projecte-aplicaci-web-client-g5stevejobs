@@ -49,8 +49,8 @@ export default function Home() {
           {/* Download button */}
           <div className="relative inline-block">
             <a
-              href="/downloads/ProyectoDAM.zip"
-              download
+              href="/downloads/TheAbyss.exe"
+              download="TheAbyss.exe"
               onClick={handleDownload}
               className={`group relative inline-flex items-center justify-center px-10 py-5 rounded-full overflow-hidden bg-blue-600 hover:bg-blue-500 transition-all duration-300 shadow-lg ${isLoading ? 'animate-pulse cursor-not-allowed' : 'hover:scale-105'}`}
             >
@@ -172,8 +172,8 @@ export default function Home() {
           <h2 className="text-3xl md:text-4xl font-bold mb-6">{t.readyToPlay || "¿Listo para comenzar tu aventura?"}</h2>
           <p className="text-lg md:text-xl mb-8 text-blue-100">{t.ctaSubtitle || "Descarga ahora y únete a miles de jugadores explorando The Abyss."}</p>
           <a
-            href="/downloads/ProyectoDAM.zip"
-            download
+            href="/downloads/TheAbyss.exe"
+            download="TheAbyss.exe"
             onClick={handleDownload}
             className="inline-block bg-white text-blue-600 font-bold text-lg px-8 py-4 rounded-full hover:bg-gray-100 transition-colors shadow-lg hover:shadow-xl"
           >
