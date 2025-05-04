@@ -183,4 +183,69 @@ export const es = {
   // Location
   ourOffice: "Nuestra Oficina",
   officeLocation: "La Salle Campus Barcelona, Carrer de Sant Joan de La Salle, 42, 08022 Barcelona",
+  
+  // Página de Soporte
+  supportCenter: "Centro de Soporte",
+  findAnswers: "Encuentra respuestas a tus preguntas o contáctanos directamente",
+  directContact: "Contacto Directo",
+  searchFAQ: "Busca en nuestras preguntas frecuentes...",
+  allQuestions: "Todas las preguntas",
+  accountProfile: "Cuenta y Perfil",
+  forumPosts: "Foro y Publicaciones",
+  aboutGame: "Sobre el Juego",
+  technicalIssues: "Problemas Técnicos",
+  frequentlyAskedQuestions: "Preguntas Frecuentes",
+  noSearchResults: "No se encontraron resultados para tu búsqueda",
+  clearFilters: "Limpiar filtros",
+  discoverTheAbyss: "Descubre The Abyss",
+  exploreAbyss: "Sumérgete en el misterioso mundo de The Abyss, inspirado en el anime 'Made in Abyss'. Explora un abismo vertical lleno de criaturas fascinantes, reliquias antiguas y secretos por descubrir.",
+  downloadGame: "Descargar juego",
+  aboutUs: "Sobre nosotros",
+  
+  // Preguntas de Soporte
+  changePassword: "¿Cómo puedo cambiar mi contraseña?",
+  changePasswordAnswer: "Puedes cambiar tu contraseña accediendo a tu perfil, haciendo clic en \"Configuración\" y seleccionando la opción \"Cambiar contraseña\". Si has olvidado tu contraseña, usa la opción \"Olvidé mi contraseña\" en la página de inicio de sesión.",
+  cannotPostForum: "¿Por qué no puedo publicar en el foro?",
+  cannotPostForumAnswer: "Para publicar en el foro necesitas tener una cuenta y estar conectado. Si ya tienes una cuenta y sigues teniendo problemas, es posible que tu cuenta esté temporalmente suspendida debido a infracciones de las normas del foro.",
+  technicalRequirements: "¿Cuáles son los requisitos técnicos para jugar The Abyss?",
+  technicalRequirementsAnswer: "The Abyss requiere: Sistema operativo Windows 10 o superior, procesador Intel Core i5 o equivalente, 8GB de RAM, 4GB de espacio libre en disco y una tarjeta gráfica con al menos 2GB de memoria dedicada. Para una experiencia óptima, recomendamos usar una conexión a Internet estable.",
+  reportUserForum: "¿Cómo reporto a un usuario que está incumpliendo las normas?",
+  reportUserForumAnswer: "Puedes reportar a un usuario dirigiéndote a la sección \"Reportar\" en la página del foro. Proporciona toda la información relevante, incluyendo el nombre de usuario y una descripción del comportamiento inapropiado. Nuestro equipo revisará tu informe lo antes posible.",
+  multiplayerMode: "¿El juego tiene modo multijugador?",
+  multiplayerModeAnswer: "Actualmente, The Abyss es una experiencia principalmente para un solo jugador que se centra en la exploración y narrativa. Sin embargo, estamos considerando añadir características multijugador en futuras actualizaciones.",
+  gameNotStarting: "¿Por qué el juego no se inicia en mi ordenador?",
+  gameNotStartingAnswer: "Si tienes problemas para iniciar el juego, verifica que tu sistema cumple con los requisitos mínimos. Intenta actualizar los controladores de tu tarjeta gráfica, reiniciar tu ordenador y asegurarte de que no hay otros programas consumiendo muchos recursos. Si el problema persiste, contacta con nuestro equipo de soporte.",
+  changeUsername: "¿Cómo cambio mi nombre de usuario o avatar?",
+  changeUsernameAnswer: "Para cambiar tu nombre de usuario o avatar, ve a tu perfil y selecciona \"Editar perfil\". Desde allí podrás actualizar tu información personal, incluyendo tu nombre de usuario y avatar. Ten en cuenta que solo puedes cambiar tu nombre de usuario una vez cada 30 días.",
+  forumModeration: "¿El foro tiene algún sistema de moderación?",
+  forumModerationAnswer: "Sí, nuestro foro cuenta con un equipo de moderadores que supervisan las publicaciones para garantizar que se respeten las normas de la comunidad. También utilizamos sistemas automáticos para filtrar contenido inapropiado.",
+  
+  // Blog
+  blogTitle: "Noticias y Actualizaciones",
+  latestPosts: "Últimas Publicaciones",
+  readMore: "Leer más",
+  publishedOn: "Publicado el",
+  blogNotFound: "Entrada de blog no encontrada",
+  backToBlog: "Volver al blog",
+  author: "Autor",
+  sharePost: "Compartir publicación",
+  relatedPosts: "Publicaciones relacionadas",
+  
+  // Blog posts
+  blogPauseTitle: "Pausa",
+  blogPausePreview: "Nueva funcionalidad, nuestro menú de pausa.",
+  blogPauseContent: "Nos complace anunciar una nueva funcionalidad en nuestro juego: el menú de pausa. Este menú ha sido desarrollado por nuestros talentosos desarrolladores Fan e Iván, quienes han trabajado arduamente para ofrecer una experiencia de usuario fluida y eficiente.\n\nEl menú de pausa permite a los jugadores detener el juego en cualquier momento y acceder a una variedad de opciones útiles. Entre las características principales del menú de pausa se incluyen:\n\n- Reanudar juego: Permite a los jugadores continuar desde donde dejaron.\n- Reiniciar sala: Para reiniciar el nivel.\n- Salir: Para salir del juego.\n\nFan e Iván han puesto un gran esfuerzo en asegurarse de que el menú de pausa sea intuitivo y fácil de usar. Han realizado múltiples pruebas y ajustes para garantizar que funcione sin problemas en todas las plataformas.\n\nEstamos muy orgullosos del trabajo realizado por Fan e Iván y estamos seguros de que los jugadores apreciarán esta nueva funcionalidad. ¡Esperamos que disfruten del nuevo menú de pausa tanto como nosotros disfrutamos creándolo!",
+  
+  // Nuevas traducciones para los otros blogs
+  blogUpdatesTitle: "Actualizaciones del Juego",
+  blogUpdatesPreview: "Últimas mejoras y correcciones de errores para mejorar la experiencia de juego.",
+  blogUpdatesContent: "Esta es una entrada de blog sobre las últimas actualizaciones del juego.\n\nHemos estado trabajando arduamente para mejorar la experiencia de juego y corregir varios errores que fueron reportados por nuestra comunidad. Aquí están algunas de las actualizaciones clave:\n\n- Mejoras en el movimiento y la respuesta del personaje\n- Corrección de problemas de detección de colisiones en el nivel 3\n- Efectos visuales mejorados para habilidades especiales\n- Nuevos efectos de sonido para una mejor inmersión\n\nAgradecemos todos los comentarios que hemos recibido y continuamos trabajando para hacer de The Abyss la mejor experiencia posible para nuestros jugadores. Nuestro compromiso es ofrecer actualizaciones y mejoras regulares basadas en los comentarios de los jugadores.\n\nEl equipo se ha centrado en optimizar el rendimiento en todas las plataformas soportadas, asegurando que el juego funcione sin problemas independientemente de las especificaciones de tu dispositivo.\n\n¡Mantente atento a más actualizaciones próximamente!",
+  
+  blogDevelopmentTitle: "Proceso de Desarrollo",
+  blogDevelopmentPreview: "Conoce nuestro proceso de desarrollo y las tecnologías detrás de The Abyss.",
+  blogDevelopmentContent: "En esta publicación, nos gustaría compartir algunas ideas sobre nuestro proceso de desarrollo y las tecnologías que utilizamos para crear The Abyss. Nuestro viaje ha sido tanto desafiante como gratificante, lleno de descubrimientos e innovaciones.\n\nNuestro juego está construido utilizando Unity, que nos proporciona herramientas potentes para crear experiencias inmersivas de plataformas 2D. Hemos utilizado varias técnicas para lograr el estilo visual único que caracteriza a nuestro juego:\n\n- Shaders personalizados para los efectos de brillo místico\n- Sistemas de partículas para la ambientación\n- Generación procedural para ciertos elementos de nivel\n- Mezcla avanzada de animaciones para un movimiento fluido del personaje\n\nLa dirección artística fue fuertemente influenciada por el anime original Made in Abyss, con nuestro propio toque único para hacerlo adecuado para una experiencia interactiva. Cada elemento ha sido cuidadosamente elaborado para mejorar la atmósfera de misterio y descubrimiento.\n\nEl viaje de desarrollo ha sido desafiante pero extremadamente gratificante. Hemos aprendido mucho en el camino y continuamos mejorando nuestras habilidades con cada actualización.",
+  
+  blogFutureTitle: "Planes Futuros",
+  blogFuturePreview: "Próximas características y mejoras planificadas para The Abyss en los próximos meses.",
+  blogFutureContent: "¡Estamos emocionados de compartir nuestros planes futuros para The Abyss! Aquí hay un adelanto de lo que estamos trabajando para los próximos meses. Nuestra hoja de ruta es ambiciosa pero alcanzable, con varias características clave en desarrollo.\n\n## Próximas Características\n\n- **Nuevos Niveles**: Estamos diseñando cinco nuevos niveles desafiantes que pondrán a prueba tus habilidades e introducirán nuevas mecánicas de juego.\n- **Personalización de Personajes**: Pronto podrás personalizar tu personaje con varias opciones cosméticas.\n- **Batallas contra Jefes**: Vendrán épicas batallas contra jefes para proporcionar un desafío culminante al final de cada mundo.\n- **Banda Sonora Mejorada**: Nuevos temas musicales para mejorar la atmósfera de cada área.\n\n## Cronograma de Lanzamiento\n\nPlaneamos lanzar estas características en fases durante los próximos seis meses. Mantente atento para anuncios más detallados a medida que nos acerquemos a cada fecha de lanzamiento.\n\nTu continuo apoyo y comentarios son invaluables para nosotros. Estamos comprometidos a hacer de The Abyss una experiencia en constante evolución a la que querrás volver una y otra vez.\n\n¡Gracias por ser parte de nuestro viaje!"
 }; 
