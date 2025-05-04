@@ -147,6 +147,20 @@ export const en = {
   
   // Homepage
   gameInfo: "Game information",
+  heroSubtitle: "Explore the depths of a mysterious world full of dangers and treasures waiting to be discovered.",
+  downloading: "Downloading...",
+  thankYou: "Thank you for downloading!",
+  gameFeatures: "Game Features",
+  feature1Title: "Immersive Graphics",
+  feature1Desc: "Enjoy a detailed world with captivating graphics that will immerse you in the universe of The Abyss.",
+  feature2Title: "Intuitive Controls",
+  feature2Desc: "Easily master the game mechanics with fluid, responsive controls designed for all skill levels.",
+  feature3Title: "Captivating Story",
+  feature3Desc: "Uncover the secrets of the abyss through an engaging narrative that will keep you playing until the end.",
+  screenshots: "Screenshots",
+  readyToPlay: "Ready to start your adventure?",
+  ctaSubtitle: "Download now and join thousands of players exploring The Abyss.",
+  downloadNow: "Download Now",
   
   // About Us page
   aboutUsDescription: "We are a team of students passionate about video game development and digital art, united by our love for the Made in Abyss universe.",

@@ -147,6 +147,20 @@ export const ca = {
   
   // Homepage
   gameInfo: "Informació del joc",
+  heroSubtitle: "Explora les profunditats d'un món misteriós ple de perills i tresors per descobrir.",
+  downloading: "Descarregant...",
+  thankYou: "Gràcies per descarregar!",
+  gameFeatures: "Característiques del joc",
+  feature1Title: "Gràfics immersius",
+  feature1Desc: "Gaudeix d'un món detallat amb gràfics captivadors que et submergiran en l'univers de The Abyss.",
+  feature2Title: "Controls intuïtius",
+  feature2Desc: "Domina fàcilment les mecàniques del joc amb controls fluids i responsius dissenyats per a tots els nivells.",
+  feature3Title: "Història captivadora",
+  feature3Desc: "Descobreix els secrets de l'abisme a través d'una narrativa envoltant que et mantindrà jugant fins al final.",
+  screenshots: "Captures de pantalla",
+  readyToPlay: "Preparat per començar la teva aventura?",
+  ctaSubtitle: "Descarrega ara i uneix-te a milers de jugadors explorant The Abyss.",
+  downloadNow: "Descarregar Ara",
   
   // About Us page
   aboutUsDescription: "Som un equip d'estudiants apassionats pel desenvolupament de videojocs i l'art digital, units pel nostre amor cap a l'univers de Made in Abyss.",

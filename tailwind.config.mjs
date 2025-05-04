@@ -12,6 +12,7 @@ module.exports = withMT ({
     extend: {
       colors: {
         'gray-850': '#2e2e2e', // Define el color gris intermedio
+        'gray-650': '#3c3c3c', // Un poco más claro para hover effects
       },
     },
   },
