@@ -229,15 +229,26 @@ export default function PostListClient() {
           </div>
           <div className="flex gap-3">
             {user ? (
-              <button
-                onClick={() => router.push('/foro/create')}
-                className="flex items-center gap-2 bg-blue-600 text-white px-5 py-2.5 rounded-lg hover:bg-blue-500 transition-colors shadow-lg hover:shadow-blue-700/20"
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-                </svg>
-                {t.createPost || "Nueva Publicación"}
-              </button>
+              <>
+                <button
+                  onClick={() => router.push('/foro/create')}
+                  className="flex items-center gap-2 bg-blue-600 text-white px-5 py-2.5 rounded-lg hover:bg-blue-500 transition-colors shadow-lg hover:shadow-blue-700/20"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                  </svg>
+                  {t.createPost || "Nueva Publicación"}
+                </button>
+                <button
+                  onClick={() => router.push('/report')}
+                  className="flex items-center gap-2 bg-red-600 text-white px-5 py-2.5 rounded-lg hover:bg-red-500 transition-colors shadow-lg hover:shadow-red-700/20"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                  </svg>
+                  {t.reportUser || "Reportar Usuario"}
+                </button>
+              </>
             ) : (
               <button
                 onClick={() => router.push('/login')}
