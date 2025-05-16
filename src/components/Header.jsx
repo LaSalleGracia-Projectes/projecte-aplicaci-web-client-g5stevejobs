@@ -215,12 +215,14 @@ const Header = () => {
   return (
     <header className={styles.header}>
       <div className={styles.logoContainer}>
-        <Image
-          src="/images/logo-abyss.png" // Placeholder para el logo
-          alt="logoTheAbyss"
-          width={80}
-          height={50}
-        />
+        <Link href="/">
+          <Image
+            src="/images/logo-abyss.png" // Placeholder para el logo
+            alt="logoTheAbyss"
+            width={80}
+            height={50}
+          />
+        </Link>
       </div>
 
       <button 

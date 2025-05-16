@@ -432,3 +432,34 @@
       white-space: nowrap;
     }
   }
+  
+  /* Ajustes específicos para iPhone y dispositivos muy pequeños */
+  @media (max-width: 480px) {
+    .header {
+      padding: 10px 15px;
+      justify-content: space-between;
+    }
+    
+    .logoContainer {
+      order: 0;
+    }
+    
+    .searchBar {
+      order: 2;
+    }
+    
+    .searchInput {
+      padding: 10px;
+      font-size: 14px;
+    }
+    
+    .burgerMenu {
+      order: 1;
+    }
+    
+    .loginButton {
+      padding: 8px 14px;
+      font-size: 15px;
+      order: 3;
+    }
+  }

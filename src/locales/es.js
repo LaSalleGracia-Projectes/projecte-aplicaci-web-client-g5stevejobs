@@ -157,7 +157,7 @@ export const es = {
   feature2Desc: "Domina fácilmente las mecánicas del juego con controles fluidos y responsivos diseñados para todos los niveles.",
   feature3Title: "Historia cautivadora",
   feature3Desc: "Descubre los secretos del abismo a través de una narrativa envolvente que te mantendrá jugando hasta el final.",
-  screenshots: "Capturas de pantalla",
+  screenshots: "Galería",
   readyToPlay: "¿Listo para comenzar tu aventura?",
   ctaSubtitle: "Descarga ahora y únete a miles de jugadores explorando The Abyss.",
   downloadNow: "Descargar Ahora",

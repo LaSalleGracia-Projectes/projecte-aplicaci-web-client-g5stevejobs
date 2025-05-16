@@ -136,14 +136,14 @@ export default function Home() {
         </div>
       </section>
       
-      {/* Game Screenshots Section */}
+      {/* Game Screenshots Section - Now Gallery */}
       <section className="py-20 px-4">
         <div className="max-w-6xl mx-auto">
           <h2 className="text-4xl font-bold text-center mb-16">
-            {t.screenshots || "Capturas de pantalla"}
+            {t.screenshots || "Galería"}
           </h2>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div className="overflow-hidden rounded-lg shadow-lg hover:shadow-2xl transition-all duration-300 hover:scale-[1.02]">
               <Image
                 src="/images/menupausa.jpg"
@@ -157,6 +157,42 @@ export default function Home() {
               <Image
                 src="/images/attack.jpg"
                 alt="Game Screenshot 2"
+                width={600}
+                height={338}
+                className="w-full h-auto object-cover"
+              />
+            </div>
+            <div className="overflow-hidden rounded-lg shadow-lg hover:shadow-2xl transition-all duration-300 hover:scale-[1.02]">
+              <Image
+                src="/images/sprite1.png"
+                alt="Game Screenshot 3"
+                width={600}
+                height={338}
+                className="w-full h-auto object-cover"
+              />
+            </div>
+            <div className="overflow-hidden rounded-lg shadow-lg hover:shadow-2xl transition-all duration-300 hover:scale-[1.02]">
+              <Image
+                src="/images/sprite2.png"
+                alt="Game Screenshot 4"
+                width={600}
+                height={338}
+                className="w-full h-auto object-cover"
+              />
+            </div>
+            <div className="overflow-hidden rounded-lg shadow-lg hover:shadow-2xl transition-all duration-300 hover:scale-[1.02]">
+              <Image
+                src="/images/sprite3.png"
+                alt="Game Screenshot 5"
+                width={600}
+                height={338}
+                className="w-full h-auto object-cover"
+              />
+            </div>
+            <div className="overflow-hidden rounded-lg shadow-lg hover:shadow-2xl transition-all duration-300 hover:scale-[1.02]">
+              <Image
+                src="/images/sprite4.png"
+                alt="Game Screenshot 6"
                 width={600}
                 height={338}
                 className="w-full h-auto object-cover"

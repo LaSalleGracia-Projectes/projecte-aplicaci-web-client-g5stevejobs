@@ -63,7 +63,7 @@ const blogData = {
       
       Stay tuned for more updates coming soon!
     `,
-    image: "/images/blog2-thumbnail.jpg",
+    image: "/images/sprite1.png",
     author: {
       name: "Iván García",
       avatar: "/images/logo-abyss.png",
@@ -94,7 +94,7 @@ const blogData = {
       The development journey has been challenging but extremely rewarding. We've learned 
       a lot along the way and continue to improve our skills with each update.
     `,
-    image: "/images/blog3-thumbnail.jpg",
+    image: "/images/sprite2.png",
     author: {
       name: "Fan",
       avatar: "/images/logo-abyss.png",
@@ -129,7 +129,7 @@ const blogData = {
       
       Thank you for being part of our journey!
     `,
-    image: "/images/blog4-thumbnail.jpg",
+    image: "/images/attack.jpg",
     author: {
       name: "Adrián Lozano",
       avatar: "/images/logo-abyss.png",

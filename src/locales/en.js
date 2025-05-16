@@ -157,7 +157,7 @@ export const en = {
   feature2Desc: "Easily master the game mechanics with fluid, responsive controls designed for all skill levels.",
   feature3Title: "Captivating Story",
   feature3Desc: "Uncover the secrets of the abyss through an engaging narrative that will keep you playing until the end.",
-  screenshots: "Screenshots",
+  screenshots: "Gallery",
   readyToPlay: "Ready to start your adventure?",
   ctaSubtitle: "Download now and join thousands of players exploring The Abyss.",
   downloadNow: "Download Now",

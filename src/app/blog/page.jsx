@@ -25,7 +25,7 @@ const BlogPage = () => {
       slug: "blog-2", 
       date: "08-03-2025", 
       preview: t.blogUpdatesPreview || "Latest improvements and bug fixes to enhance the gameplay experience.", 
-      thumbnail: "/images/blog2-thumbnail.jpg",
+      thumbnail: "/images/sprite1.png",
       author: "Iván García",
       category: "Updates"
     },
@@ -35,7 +35,7 @@ const BlogPage = () => {
       slug: "blog-3", 
       date: "07-03-2025", 
       preview: t.blogDevelopmentPreview || "Insights into our development journey and the technologies behind The Abyss.", 
-      thumbnail: "/images/blog3-thumbnail.jpg",
+      thumbnail: "/images/sprite2.png",
       author: "Fan",
       category: "Development"
     },
@@ -45,7 +45,7 @@ const BlogPage = () => {
       slug: "blog-4", 
       date: "09-05-2024", 
       preview: t.blogFuturePreview || "Upcoming features and enhancements planned for The Abyss in the coming months.", 
-      thumbnail: "/images/blog4-thumbnail.jpg",
+      thumbnail: "/images/attack.jpg",
       author: "Adrián Lozano",
       category: "Roadmap"
     },
